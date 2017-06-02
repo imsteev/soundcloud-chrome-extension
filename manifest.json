@@ -1,14 +1,22 @@
 {
   "manifest_version": 2,
-
   "name": "soundcloud chrome extension",
   "description": "integrate a seamless audio player into browser",
   "version": "1.0",
-
+  "icons" : { "16" : "images/note16.png",
+              "48" : "images/note48.png",
+              "128": "images/note128.png" },
   "browser_action": {
+    "default_title" : "Soundcloud Player",
+    "default_popup" : "popup.html",
+    "default_icon" : {
+        "16" : "images/note16.png",
+        "48" : "images/note48.png",
+        "128": "images/note128.png"
+    }
   },
-  "permissions": [
-    "activeTab",
-    "https://ajax.googleapis.com/"
+  "web_accessible_resources" : [
+    "images/*.png",
+    "scripts/*.js"
   ]
 }
