@@ -14,7 +14,8 @@
     }
   },
   "permissions" :  [
-    "tabs"
+    "tabs",
+    "storage"
   ],
   "background" : {
     "scripts" : ["background.js"],
@@ -30,11 +31,19 @@
       "global" : true
     },
     "open-soundcloud" : {
-      "suggest_key" : {
+      "suggested_key" : {
         "default" : "Ctrl+Shift+S",
         "mac": "Command+Shift+S"
       },
       "description" : "open soundcloud.com",
+      "global" : true
+    },
+    "previous-location" : {
+      "suggested_key" : {
+        "default" : "Ctrl+Shift+A",
+        "mac": "Command+Shift+A"
+      },
+      "description" : "go back to the tab you called open-soundcloud from",
       "global" : true
     }
   }

@@ -1,11 +1,41 @@
+function switchToTabInWindow(tabId,windowId) {
+  var windowUpdateInfo = { "focused" : true };
+  chrome.windows.update(windowId, windowUpdateInfo);
+
+  // TODO: not all tabs will have an id.
+  var tabUpdateInfo = { "active" : true };
+  chrome.tabs.update(tabId,tabUpdateInfo);
+}
+
+function setPrevPageInfo(tabId,windowId) {
+  var newPrevInfo = {
+    "prevTabId" : tabId,
+    "prevWindowId" : windowId
+  };
+  chrome.storage.sync.set(newPrevInfo);
+}
+
+function getActiveTab() {
+  var activeTabInfo = {"currentWindow": true, "active" : true};
+  return chrome.tabs.query(activeTabInfo,function (tabs) {
+    console.log("getting active tab");
+    console.log(tabs.length);
+    return tabs[0];
+  });
+}
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+  setPrevPageInfo(activeInfo.tabId,activeInfo.windowId);
+});
+
 // Keyboard shortcuts for this extension
 chrome.commands.onCommand.addListener(function (command) {
   switch (command) {
     case "open-player" :
-      chrome.tabs.create({url : "http://google.com" });
+      // TODO: bring up the audio UI
       break;
     case "open-soundcloud" :
-      // console.log("opening soundcloud");
+      var activeTab = getActiveTab();
+      setPrevPageInfo(activeTab.id, activeTab.windowId);
       var query = {
         "url" : "*://soundcloud.com/*"
       }
@@ -13,8 +43,8 @@ chrome.commands.onCommand.addListener(function (command) {
         if (soundcloudTabs.length == 0) {
           chrome.tabs.create({ url : "https://soundcloud.com" });
         } else {
-          console.log("some tabs already open, switch to that tab");
           var tabToSwitchTo = null;
+          // TODO: try to not have to look thru all the tabs every time. Caching?
           var audibleTabs = soundcloudTabs.filter(function (t) {
             return t.audible == true;
           });
@@ -23,17 +53,20 @@ chrome.commands.onCommand.addListener(function (command) {
           } else {
             tabToSwitchTo = soundcloudTabs[0];
           }
-          var windowUpdateInfo = {
-            "focused" : true
-          };
-          var tabUpdateInfo = {
-            "active" : true
-          };
-          chrome.windows.update(tabToSwitchTo.windowId, windowUpdateInfo);
-          // TODO: not all tabs will have an id.
-          chrome.tabs.update(tabToSwitchTo.id,tabUpdateInfo);
+          // TODO: only update if not on tabToSwitchTo
+          switchToTabInWindow(tabToSwitchTo.id,tabToSwitchTo.windowId);
         }
       });
+      break;
+    case "previous-location" :
+      var prevInfo = ["prevTabId", "prevWindowId"];
+      chrome.storage.sync.get(prevInfo, function (prevInfo) {
+        if (chrome.runtime.lastError == null) {
+          console.log("going back");
+          switchToTabInWindow(prevInfo.prevTabId,prevInfo.prevWindowId);
+        }
+      });
+      break;
     default: break;
   }
 });
