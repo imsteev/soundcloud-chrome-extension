@@ -18,14 +18,13 @@ function setPrevPageInfo(tabId,windowId) {
 function getActiveTab() {
   var activeTabInfo = {"currentWindow": true, "active" : true};
   return chrome.tabs.query(activeTabInfo,function (tabs) {
-    console.log("getting active tab");
-    console.log(tabs.length);
     return tabs[0];
   });
 }
-chrome.tabs.onActivated.addListener(function (activeInfo) {
-  setPrevPageInfo(activeInfo.tabId,activeInfo.windowId);
-});
+
+// chrome.tabs.onActivated.addListener(function (activeInfo) {
+//   setPrevPageInfo(activeInfo.tabId,activeInfo.windowId);
+// });
 
 // Keyboard shortcuts for this extension
 chrome.commands.onCommand.addListener(function (command) {
@@ -35,10 +34,10 @@ chrome.commands.onCommand.addListener(function (command) {
       break;
     case "open-soundcloud" :
       var activeTab = getActiveTab();
-      setPrevPageInfo(activeTab.id, activeTab.windowId);
-      var query = {
-        "url" : "*://soundcloud.com/*"
+      if (activeTab != null) {
+        setPrevPageInfo(activeTab.id, activeTab.windowId);
       }
+      var query = { "url" : "*://soundcloud.com/*" }
       chrome.tabs.query(query,function(soundcloudTabs) {
         if (soundcloudTabs.length == 0) {
           chrome.tabs.create({ url : "https://soundcloud.com" });
@@ -49,7 +48,7 @@ chrome.commands.onCommand.addListener(function (command) {
             return t.audible == true;
           });
           if (audibleTabs.length > 0) {
-            tabToSwitchTo = audibleTabs[0]; // still need to do a better switching
+            tabToSwitchTo = audibleTabs[0];
           } else {
             tabToSwitchTo = soundcloudTabs[0];
           }
@@ -62,7 +61,6 @@ chrome.commands.onCommand.addListener(function (command) {
       var prevInfo = ["prevTabId", "prevWindowId"];
       chrome.storage.sync.get(prevInfo, function (prevInfo) {
         if (chrome.runtime.lastError == null) {
-          console.log("going back");
           switchToTabInWindow(prevInfo.prevTabId,prevInfo.prevWindowId);
         }
       });
