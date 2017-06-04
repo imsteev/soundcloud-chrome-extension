@@ -1,7 +1,6 @@
 function switchToTabInWindow(tabId,windowId) {
   var windowUpdateInfo = { "focused" : true };
   chrome.windows.update(windowId, windowUpdateInfo);
-
   // TODO: not all tabs will have an id.
   var tabUpdateInfo = { "active" : true };
   chrome.tabs.update(tabId,tabUpdateInfo);
@@ -15,25 +14,22 @@ function setPrevPageInfo(tabId,windowId) {
   chrome.storage.sync.set(newPrevInfo);
 }
 
-function getActiveTab() {
-  var activeTabInfo = {"currentWindow": true, "active" : true};
-  return chrome.tabs.query(activeTabInfo,function (tabs) {
-    return tabs[0];
-  });
-}
-
 // chrome.tabs.onActivated.addListener(function (activeInfo) {
 //   setPrevPageInfo(activeInfo.tabId,activeInfo.windowId);
 // });
-
+chrome.commands
 // Keyboard shortcuts for this extension
 chrome.commands.onCommand.addListener(function (command) {
   switch (command) {
     case "open-soundcloud" :
-      var activeTab = getActiveTab();
-      if (activeTab != null) {
-        setPrevPageInfo(activeTab.id, activeTab.windowId);
-      }
+      var activeTabInfo = {"lastFocusedWindow": true, "active" : true};
+      chrome.tabs.query(activeTabInfo,function(tabs) {
+        if (tabs.length > 0) {
+          // only set previous info if the page you are looking at is a
+          // "tabbable" window. For example, a develepor tools window. TODO: look more into this.
+          setPrevPageInfo(tabs[0].id,tabs[0].windowId);
+        }
+      });
       var query = { "url" : "*://soundcloud.com/*" }
       chrome.tabs.query(query,function(soundcloudTabs) {
         if (soundcloudTabs.length == 0) {
