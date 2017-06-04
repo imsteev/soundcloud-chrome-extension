@@ -14,10 +14,6 @@ function setPrevPageInfo(tabId,windowId) {
   chrome.storage.sync.set(newPrevInfo);
 }
 
-// chrome.tabs.onActivated.addListener(function (activeInfo) {
-//   setPrevPageInfo(activeInfo.tabId,activeInfo.windowId);
-// });
-chrome.commands
 // Keyboard shortcuts for this extension
 chrome.commands.onCommand.addListener(function (command) {
   switch (command) {

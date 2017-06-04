@@ -6,11 +6,11 @@
 
   "browser_action": {
     "default_title" : "Soundcloud Player",
-    "default_popup" : "popup.html",
+    "default_popup" : "html/popup.html",
     "default_icon" : {
-        "16" : "images/note16.png",
-        "48" : "images/note48.png",
-        "128": "images/note128.png"
+        "16" : "img/note16.png",
+        "48" : "img/note48.png",
+        "128": "img/note128.png"
     }
   },
   "permissions" :  [
@@ -18,7 +18,7 @@
     "storage"
   ],
   "background" : {
-    "scripts" : ["background.js"],
+    "scripts" : ["js/background.js"],
     "persistent" : false
   },
   "commands" : {
