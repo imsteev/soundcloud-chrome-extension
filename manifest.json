@@ -22,7 +22,7 @@
     "persistent" : false
   },
   "commands" : {
-    "open-player" : {
+    "_execute_browser_action" : {
       "suggested_key" : {
         "default" : "Ctrl+Shift+P",
         "mac": "Command+Shift+P"

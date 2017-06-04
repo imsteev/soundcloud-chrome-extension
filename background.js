@@ -29,9 +29,6 @@ function getActiveTab() {
 // Keyboard shortcuts for this extension
 chrome.commands.onCommand.addListener(function (command) {
   switch (command) {
-    case "open-player" :
-      // TODO: bring up the audio UI
-      break;
     case "open-soundcloud" :
       var activeTab = getActiveTab();
       if (activeTab != null) {
