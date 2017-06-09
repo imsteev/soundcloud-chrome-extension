@@ -18,7 +18,9 @@
     "storage"
   ],
   "background": {
-    "scripts": ["js/soundcloud.js","js/background.js"],
+    "scripts": ["js/sdk-3.1.2.js",
+                "js/soundcloud.js",
+                "js/background.js"],
     "persistent": false
   },
   "commands": {

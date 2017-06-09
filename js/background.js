@@ -1,7 +1,3 @@
-import * as soundcloud from 'soundcloud';
-
-console.log(soundcloud);
-
 function switchToTabInWindow(tabId, windowId) {
   var windowUpdateInfo = {
     "focused": true
