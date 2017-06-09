@@ -5,46 +5,46 @@
   "version": "1.0",
 
   "browser_action": {
-    "default_title" : "Soundcloud Player",
-    "default_popup" : "html/popup.html",
-    "default_icon" : {
-        "16" : "img/note16.png",
-        "48" : "img/note48.png",
-        "128": "img/note128.png"
+    "default_title": "Soundcloud Player",
+    "default_popup": "html/popup.html",
+    "default_icon": {
+      "16": "img/note16.png",
+      "48": "img/note48.png",
+      "128": "img/note128.png"
     }
   },
-  "permissions" :  [
+  "permissions": [
     "tabs",
     "storage"
   ],
-  "background" : {
-    "scripts" : ["js/background.js"],
-    "persistent" : false
+  "background": {
+    "scripts": ["js/soundcloud.js","js/background.js"],
+    "persistent": false
   },
-  "commands" : {
-    "_execute_browser_action" : {
-      "suggested_key" : {
-        "default" : "Ctrl+Shift+P",
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+P",
         "mac": "Command+Shift+P"
       },
-      "description" : "open the audio player",
-      "global" : true
+      "description": "open the audio player",
+      "global": true
     },
-    "open-soundcloud" : {
-      "suggested_key" : {
-        "default" : "Ctrl+Shift+S",
+    "open-soundcloud": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
         "mac": "Command+Shift+S"
       },
-      "description" : "open soundcloud.com",
-      "global" : true
+      "description": "open soundcloud.com",
+      "global": true
     },
-    "previous-location" : {
-      "suggested_key" : {
-        "default" : "Ctrl+Shift+A",
+    "previous-location": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A",
         "mac": "Command+Shift+A"
       },
-      "description" : "go back to the tab you called open-soundcloud from",
-      "global" : true
+      "description": "go back to the tab you called open-soundcloud from",
+      "global": true
     }
   }
 }
