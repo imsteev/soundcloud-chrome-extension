@@ -1,5 +1,31 @@
+// Initialize soundcloud API with client key
+$.getJSON("../config.json", function(data) {
+  SC.initialize({
+    client_id: data["soundcloud_client_id"]
+  });
+  console.log(SC);
+});
+
+
 chrome.runtime.onMessage.addListener(function(msg, sender, response) {
-  console.log(msg);
+  var searchedTracks = [];
+  var general = msg['general'];
+  SC.get("/tracks", {
+    q: msg['general']
+  }).then(function(tracks) {
+    console.log(tracks);
+  }, function(error) {
+    console.log("Error: " + error);
+  });
+
+  // var SC = msg["SC"];
+  // SC.get("/users", {
+  //   q: "imsteev"
+  // }).then(function(users) {
+  //   console.log(users[0]);
+  // }, function(error) {
+  //   console.log("Error: " + error);
+  // });
 });
 
 // --------- KEYBOARD SHORTCUT LISTENERS -------------------------------------
