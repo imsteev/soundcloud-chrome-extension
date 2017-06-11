@@ -18,8 +18,8 @@
     "storage"
   ],
   "background": {
-    "scripts": ["js/sdk-3.1.2.js",
-                "js/popup.js",
+    "scripts": ["js/jquery-3.2.1.min.js",
+                "js/sdk-3.1.2.js",
                 "js/background.js"],
     "persistent": false
   },

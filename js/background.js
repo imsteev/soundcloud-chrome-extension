@@ -1,3 +1,8 @@
+chrome.runtime.onMessage.addListener(function(msg, sender, response) {
+  console.log(msg);
+});
+
+// --------- KEYBOARD SHORTCUT LISTENERS -------------------------------------
 function switchToTabInWindow(tabId, windowId) {
   var windowUpdateInfo = {
     "focused": true
@@ -18,7 +23,6 @@ function setPrevPageInfo(tabId, windowId) {
   chrome.storage.sync.set(newPrevInfo);
 }
 
-// Keyboard shortcuts for this extension
 chrome.commands.onCommand.addListener(function(command) {
   switch (command) {
     case "open-soundcloud":
@@ -64,7 +68,6 @@ chrome.commands.onCommand.addListener(function(command) {
           switchToTabInWindow(prevInfo.prevTabId, prevInfo.prevWindowId);
         }
       });
-      break;
     default:
       break;
   }
