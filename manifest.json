@@ -19,7 +19,7 @@
   ],
   "background": {
     "scripts": ["js/sdk-3.1.2.js",
-                "js/soundcloud.js",
+                "js/popup.js",
                 "js/background.js"],
     "persistent": false
   },
@@ -37,7 +37,7 @@
         "default": "Ctrl+Shift+S",
         "mac": "Command+Shift+S"
       },
-      "description": "open soundcloud.com",
+      "description": "open a soundcloud.com tab",
       "global": true
     },
     "previous-location": {
