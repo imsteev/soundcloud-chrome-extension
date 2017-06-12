@@ -14,8 +14,10 @@ chrome.runtime.onConnect.addListener(function(port) {
       q: msg['general']
     }).then(function(tracks) {
       console.log("message from popup: " + msg);
-      port.postMessage("hello popup.js, this is background.js");
-      // port.postMessage("Querying " + msg['general'] + "...");
+      port.postMessage({
+        "message": "hello popup.js, this is background.js",
+        "tracks": tracks
+      });
     }, function(error) {
       console.log("Error: " + error);
     });

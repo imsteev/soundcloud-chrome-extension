@@ -19,5 +19,6 @@ $("#testButton").on('click', function() {
 });
 
 port.onMessage.addListener(function(msg, sender, response) {
-  console.log(msg);
+  console.log(msg['message']);
+  console.log(msg['tracks']);
 });
