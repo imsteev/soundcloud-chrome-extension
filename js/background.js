@@ -10,6 +10,7 @@ chrome.runtime.onConnect.addListener(function(port) {
   console.log("Connected to " + port.name);
   port.onMessage.addListener(function(msg) {
     // var general = msg['general'];
+    // This gets the "first" 9 tracks, since soundcloud will continue to load as you scroll further down
     SC.get("/tracks", {
       q: msg['general']
     }).then(function(tracks) {
@@ -22,20 +23,7 @@ chrome.runtime.onConnect.addListener(function(port) {
       console.log("Error: " + error);
     });
   });
-})
-
-// chrome.runtime.onMessage.addListener(function(msg, sender, response) {
-//   var searchedTracks = [];
-//   var general = msg['general'];
-//   SC.get("/tracks", {
-//     q: msg['general']
-//   }).then(function(tracks) {
-//     // console.log(tracks);
-//     chrome.runtime.sendMessage("Querying " + msg['general'] + "...");
-//   }, function(error) {
-//     console.log("Error: " + error);
-//   });
-// });
+});
 
 // --------- KEYBOARD SHORTCUT LISTENERS -------------------------------------
 function switchToTabInWindow(tabId, windowId) {

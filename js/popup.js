@@ -21,4 +21,7 @@ $("#testButton").on('click', function() {
 port.onMessage.addListener(function(msg, sender, response) {
   console.log(msg['message']);
   console.log(msg['tracks']);
+  for (var i = 0; i < msg.tracks.length; i++) {
+    $(".tracks").append("<p>" + msg.tracks[i].title + "</p></br>");
+  }
 });
