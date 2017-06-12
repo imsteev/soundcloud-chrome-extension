@@ -3,6 +3,35 @@ body {
   height:300px;
 }
 
-.row {
+input:focus {
+  outline: none;
+}
+
+.title {
   background-color: yellow;
+}
+
+#title-buffer{
+  margin-top: 50px;
+}
+
+/*https://stackoverflow.com/questions/10085723/twitter-bootstrap-add-top-space-between-rows*/
+.top10{
+  margin-top: 10px;
+}
+
+.top20{
+  margin-top: 20px;
+}
+
+.top30{
+  margin-top: 30px;
+}
+
+.top40{
+  margin-top: 40px;
+}
+
+.fa-soundcloud {
+  color: orange;
 }

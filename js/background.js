@@ -11,8 +11,10 @@ chrome.runtime.onConnect.addListener(function(port) {
   port.onMessage.addListener(function(msg) {
     // var general = msg['general'];
     // This gets the "first" 9 tracks, since soundcloud will continue to load as you scroll further down
+    // see: https://developers.soundcloud.com/docs/api/guide#search for example
     SC.get("/tracks", {
-      q: msg['general']
+      q: msg['general'],
+      linked_partitioning: 1
     }).then(function(tracks) {
       console.log("message from popup: " + msg);
       port.postMessage({
