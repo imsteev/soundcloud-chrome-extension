@@ -23,6 +23,15 @@
                 "js/background.js"],
     "persistent": false
   },
+  "content_scripts" : [
+    {
+      "matches" : ["*://soundcloud.com/*"],
+      "js" : ["assets/jquery-3.2.1.min.js",
+              "assets/sdk-3.1.2.js",
+              "js/soundcloud_content_script.js"],
+      "all_frames" : true
+    }
+  ],
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {

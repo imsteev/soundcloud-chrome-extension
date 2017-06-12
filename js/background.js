@@ -5,7 +5,6 @@ $.getJSON("../config.json", function(data) {
   });
 });
 
-
 chrome.runtime.onConnect.addListener(function(port) {
   console.log("Connected to " + port.name);
   port.onMessage.addListener(function(msg) {
