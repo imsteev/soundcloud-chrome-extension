@@ -15,11 +15,11 @@ chrome.runtime.onConnect.addListener(function(port) {
     SC.get("/tracks", {
       q: msg['general'],
       linked_partitioning: 1
-    }).then(function(tracks) {
+    }).then(function(res) {
       console.log("message from popup: " + msg);
       port.postMessage({
         "message": "hello popup.js, this is background.js",
-        "tracks": tracks
+        "SC_response": res
       });
     }, function(error) {
       console.log("Error: " + error);
