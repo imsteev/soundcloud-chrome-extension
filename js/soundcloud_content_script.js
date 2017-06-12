@@ -1,1 +1,1 @@
-var port = chrome.runtime.connect();
+// TODO: use https://developer.chrome.com/extensions/tabs#method-executeScript
