@@ -10,7 +10,7 @@ var port = chrome.runtime.connect({
   "name": "soundcloud query port"
 });
 
-$("#testButton").on('click', function() {
+$("#search").on('click', function() {
   port.postMessage(getPopupSearch());
 });
 
