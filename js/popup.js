@@ -1,3 +1,7 @@
+// chrome.runtime.onMessage.addListener(function(msg, sender, response) {
+//   console.log(msg);
+// });
+
 function getPopupSearch() {
   return {
     "general": $("#general").val(),
@@ -6,13 +10,14 @@ function getPopupSearch() {
   }
 }
 
-$("#testButton").on('click', function() {
-  chrome.runtime.sendMessage(getPopupSearch());
+var port = chrome.runtime.connect({
+  "name": "soundcloud query port"
 });
-// SC.get("/users", {
-//   q: "imsteev"
-// }).then(function(users) {
-//   console.log(users[0]);
-// }, function(error) {
-//   console.log("Error: " + error);
-// });
+
+$("#testButton").on('click', function() {
+  port.postMessage(getPopupSearch());
+});
+
+port.onMessage.addListener(function(msg, sender, response) {
+  console.log(msg);
+});

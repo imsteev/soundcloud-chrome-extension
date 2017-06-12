@@ -3,30 +3,37 @@ $.getJSON("../config.json", function(data) {
   SC.initialize({
     client_id: data["soundcloud_client_id"]
   });
-  console.log(SC);
 });
 
 
-chrome.runtime.onMessage.addListener(function(msg, sender, response) {
-  var searchedTracks = [];
-  var general = msg['general'];
-  SC.get("/tracks", {
-    q: msg['general']
-  }).then(function(tracks) {
-    console.log(tracks);
-  }, function(error) {
-    console.log("Error: " + error);
+chrome.runtime.onConnect.addListener(function(port) {
+  console.log("Connected to " + port.name);
+  port.onMessage.addListener(function(msg) {
+    // var general = msg['general'];
+    SC.get("/tracks", {
+      q: msg['general']
+    }).then(function(tracks) {
+      console.log("message from popup: " + msg);
+      port.postMessage("hello popup.js, this is background.js");
+      // port.postMessage("Querying " + msg['general'] + "...");
+    }, function(error) {
+      console.log("Error: " + error);
+    });
   });
+})
 
-  // var SC = msg["SC"];
-  // SC.get("/users", {
-  //   q: "imsteev"
-  // }).then(function(users) {
-  //   console.log(users[0]);
-  // }, function(error) {
-  //   console.log("Error: " + error);
-  // });
-});
+// chrome.runtime.onMessage.addListener(function(msg, sender, response) {
+//   var searchedTracks = [];
+//   var general = msg['general'];
+//   SC.get("/tracks", {
+//     q: msg['general']
+//   }).then(function(tracks) {
+//     // console.log(tracks);
+//     chrome.runtime.sendMessage("Querying " + msg['general'] + "...");
+//   }, function(error) {
+//     console.log("Error: " + error);
+//   });
+// });
 
 // --------- KEYBOARD SHORTCUT LISTENERS -------------------------------------
 function switchToTabInWindow(tabId, windowId) {
