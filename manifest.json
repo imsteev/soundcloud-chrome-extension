@@ -8,9 +8,9 @@
     "default_title": "Soundcloud Player",
     "default_popup": "html/popup.html",
     "default_icon": {
-      "16": "img/note16.png",
-      "48": "img/note48.png",
-      "128": "img/note128.png"
+      "16": "assets/note16.png",
+      "48": "assets/note48.png",
+      "128": "assets/note128.png"
     }
   },
   "permissions": [
