@@ -1,6 +1,6 @@
 body {
-  width:400px;
-  height:300px;
+  width:420px;
+  height:auto;
 }
 
 input:focus {
@@ -8,7 +8,11 @@ input:focus {
 }
 
 .title {
-  background-color: gold;
+
+}
+
+.popup {
+  background: gold;
 }
 
 .fa-soundcloud {
@@ -16,8 +20,6 @@ input:focus {
 }
 
 .current-song {
-  background-color: lightgreen;
-  text-align:justify;
   text-indent: 10px;
 }
 

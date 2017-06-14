@@ -25,7 +25,7 @@ port.onMessage.addListener(function(msg, sender, response) {
     case "current song":
       var title = msg.content.title;
       var name =
-        $(".current-song").append("<h3>current song</h3>" + "<h2 id='song-name'>" + title + "</h2>");
+        $(".current-song").append("<h4>current song</h4>" + "<h3 id='song-name'>" + title + "</h3>");
       break;
     default:
       break;
