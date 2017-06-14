@@ -9,6 +9,8 @@ $("#search").on('click', function() {
   }
 });
 
+//TODO: on clicking the button, un-focus
+
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {
     case "search":
