@@ -5,8 +5,33 @@ $.getJSON("../config.json", function(data) {
   });
 });
 
+function sendCurrentSong(port) {
+  chrome.tabs.query({
+    "url": "*://soundcloud.com/*"
+  }, function(soundcloudTabs) {
+    if (soundcloudTabs.length > 0) {
+      var currentlyPlaying = null;
+      // TODO: try to not have to look thru all the tabs every time. Caching?
+      var audibleTabs = soundcloudTabs.filter(function(t) {
+        return t.audible == true;
+      });
+      if (audibleTabs.length == 0) {
+        return;
+      }
+      currentlyPlaying = audibleTabs[0];
+      console.log(currentlyPlaying);
+      port.postMessage({
+        "message": "current song",
+        "content": currentlyPlaying
+      });
+    }
+  });
+}
+
 chrome.runtime.onConnect.addListener(function(port) {
   console.log("Connected to " + port.name);
+  sendCurrentSong(port);
+
   port.onMessage.addListener(function(msg) {
     // var general = msg['general'];
     // This gets the "first" 9 tracks, since soundcloud will continue to load as you scroll further down
@@ -17,8 +42,8 @@ chrome.runtime.onConnect.addListener(function(port) {
     }).then(function(res) {
       console.log("message from popup: " + msg);
       port.postMessage({
-        "message": "hello popup.js, this is background.js",
-        "SC_response": res
+        "message": "search",
+        "content": res
       });
     }, function(error) {
       console.log("Error: " + error);

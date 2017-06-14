@@ -15,14 +15,23 @@ $("#search").on('click', function() {
 });
 
 port.onMessage.addListener(function(msg, sender, response) {
-  console.log(msg);
-  var tracks = msg.SC_response.collection;
-  var nextHref = msg.SC_response.next_href;
+  switch (msg.message) {
+    case "search":
+      var tracks = msg.content.collection;
+      var nextHref = msg.content.next_href;
+      console.log(tracks);
+      console.log(nextHref);
 
-  console.log(tracks);
-  console.log(nextHref);
-  for (var i = 0; i < tracks.length; i++) {
-    $(".tracks").append("<p>" + tracks[i].title + "</p></br>");
+      $(".tracks").empty();
+      for (var i = 0; i < tracks.length; i++) {
+        $(".tracks").append("<p>" + tracks[i].title + "</p></br>");
+      }
+      break;
+    case "current song":
+      $(".current-song").append("<h1>Current song</h1>" + "<p>" + msg.content.title + "</p>");
+      break;
+    default:
+      break;
   }
 });
 
