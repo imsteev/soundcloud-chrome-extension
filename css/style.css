@@ -8,14 +8,41 @@ input:focus {
 }
 
 .title {
-  background-color: yellow;
+  background-color: gold;
 }
 
 .fa-soundcloud {
-  color: orange;
+  color: black;
 }
 
-/*https://stackoverflow.com/questions/10085723/twitter-bootstrap-add-top-space-between-rows*/
+.current-song {
+  background-color: lightgreen;
+  text-align:justify;
+  text-indent: 10px;
+}
+
+#song-name {
+
+}
+
+#search-bar {
+  height: 30px;
+  width: 270px;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: lightgrey;
+  text-indent: 2px;
+}
+
+#search {
+  margin-left: 30px;
+}
+
+.top5 {
+  margin-top: 5px;
+}
+
 .top10{
   margin-top: 10px;
 }

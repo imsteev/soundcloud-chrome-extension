@@ -1,17 +1,12 @@
-function getPopupSearch() {
-  return {
-    "general": $("#general").val(),
-    "artist": $("#artist").val(),
-    "genre": $("#genre").val()
-  }
-}
-
 var port = chrome.runtime.connect({
   "name": "soundcloud query port"
 });
 
 $("#search").on('click', function() {
-  port.postMessage(getPopupSearch());
+  var searchString = $("#search-bar").val();
+  if (searchString.length > 0) {
+    port.postMessage(searchString);
+  }
 });
 
 port.onMessage.addListener(function(msg, sender, response) {
@@ -28,7 +23,9 @@ port.onMessage.addListener(function(msg, sender, response) {
       }
       break;
     case "current song":
-      $(".current-song").append("<h1>Current song</h1>" + "<p>" + msg.content.title + "</p>");
+      var title = msg.content.title;
+      var name =
+        $(".current-song").append("<h3>current song</h3>" + "<h2 id='song-name'>" + title + "</h2>");
       break;
     default:
       break;
