@@ -5,6 +5,10 @@ $.getJSON("../config.json", function(data) {
   });
 });
 
+function sendMessage(port, message) {
+  port.postMessage(message);
+}
+
 function sendCurrentSong(port) {
   chrome.tabs.query({
     "url": "*://soundcloud.com/*"
@@ -21,7 +25,7 @@ function sendCurrentSong(port) {
       currentlyPlaying = audibleTabs[0];
       console.log(currentlyPlaying);
       port.postMessage({
-        "message": "current song",
+        "message": "current-song",
         "content": currentlyPlaying
       });
     }
@@ -30,19 +34,18 @@ function sendCurrentSong(port) {
 
 chrome.runtime.onConnect.addListener(function(port) {
   console.log("Connected to " + port.name);
+
   sendCurrentSong(port);
 
   port.onMessage.addListener(function(msg) {
-    // var general = msg['general'];
-    // This gets the "first" 9 tracks, since soundcloud will continue to load as you scroll further down
-    // see: https://developers.soundcloud.com/docs/api/guide#search for example
+    var searchString = msg.content;
     SC.get("/tracks", {
-      q: msg['general'],
+      q: searchString,
       linked_partitioning: 1
     }).then(function(res) {
       console.log("message from popup: " + msg);
       port.postMessage({
-        "message": "search",
+        "message": "search-results",
         "content": res
       });
     }, function(error) {

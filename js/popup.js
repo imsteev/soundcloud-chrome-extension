@@ -5,15 +5,18 @@ var port = chrome.runtime.connect({
 $("#search").on('click', function() {
   var searchString = $("#search-bar").val();
   if (searchString.length > 0) {
-    port.postMessage(searchString);
+    console.log(searchString);
+    port.postMessage({
+      "message": "search",
+      "content": searchString
+    });
   }
 });
 
 //TODO: on clicking the button, un-focus
-
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {
-    case "search":
+    case "search-results":
       var tracks = msg.content.collection;
       var nextHref = msg.content.next_href;
       console.log(tracks);
@@ -24,10 +27,9 @@ port.onMessage.addListener(function(msg, sender, response) {
         $(".tracks").append("<p>" + tracks[i].title + "</p></br>");
       }
       break;
-    case "current song":
+    case "current-song":
       var title = msg.content.title;
-      var name =
-        $(".current-song").append("<h4>current song</h4>" + "<h3 id='song-name'>" + title + "</h3>");
+      $(".current-song").append("<h4>current song</h4><h3 id='song-name'>" + title + "</h3>");
       break;
     default:
       break;
