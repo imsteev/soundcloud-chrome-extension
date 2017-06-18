@@ -13,6 +13,12 @@ $("#search").on('click', function() {
   }
 });
 
+$("#search-bar").keypress(function(e) {
+  if (e.which == 13) {
+    $("#search").click();
+  }
+});
+
 //TODO: on clicking the button, un-focus
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {
@@ -24,7 +30,9 @@ port.onMessage.addListener(function(msg, sender, response) {
 
       $(".tracks").empty();
       for (var i = 0; i < tracks.length; i++) {
-        $(".tracks").append("<p>" + tracks[i].title + "</p></br>");
+        var track = tracks[i]
+        $(".tracks").append("<div><p>" + track.title + "</p></div>");
+        $(".tracks").append(playButton(track.permalink_url));
       }
       break;
     case "current-song":
@@ -36,4 +44,17 @@ port.onMessage.addListener(function(msg, sender, response) {
   }
 });
 
+function playButton(url) {
+  var btn = $('<button/>', {
+    text: 'play',
+    click: function() {
+      chrome.tabs.create({
+        url: url,
+        active: false,
+        pinned: true
+      });
+    }
+  });
+  return btn
+}
 //TODO: maintain current set of tracks searched, playing song, etc.
