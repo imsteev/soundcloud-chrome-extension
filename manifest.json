@@ -15,17 +15,20 @@
   },
   "permissions": [
     "tabs",
-    "storage"
+    "storage",
+    "http://*/*",
+    "https://*/*"
   ],
   "background": {
     "scripts": ["assets/jquery-3.2.1.min.js",
                 "assets/sdk-3.1.2.js",
+                "assets/sc-widget-api.js",
                 "js/background.js"],
     "persistent": false
   },
   "content_scripts" : [
     {
-      "matches" : ["*://soundcloud.com/*"],
+      "matches" : ["http://soundcloud.com/*", "https://soundcloud.com/*"],
       "js" : ["assets/jquery-3.2.1.min.js",
               "assets/sdk-3.1.2.js",
               "js/soundcloud_content_script.js"],

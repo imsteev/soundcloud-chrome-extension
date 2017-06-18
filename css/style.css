@@ -19,6 +19,10 @@ input:focus {
   color: black;
 }
 
+iframe {
+  width: 100%;
+  frameborder="no";
+}
 .current-song {
   text-indent: 10px;
 }

@@ -44,6 +44,7 @@ chrome.runtime.onConnect.addListener(function(port) {
       linked_partitioning: 1
     }).then(function(res) {
       console.log("message from popup: " + msg);
+      console.log(res);
       port.postMessage({
         "message": "search-results",
         "content": res

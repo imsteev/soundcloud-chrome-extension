@@ -27,12 +27,17 @@ port.onMessage.addListener(function(msg, sender, response) {
       var nextHref = msg.content.next_href;
       console.log(tracks);
       console.log(nextHref);
-
+      var prefix = "https://w.soundcloud.com/player/?url=";
       $(".tracks").empty();
       for (var i = 0; i < tracks.length; i++) {
         var track = tracks[i]
-        $(".tracks").append("<div><p>" + track.title + "</p></div>");
-        $(".tracks").append(playButton(track.permalink_url));
+        // $(".tracks").append("<div><p>" + track.uri + "</p></div>");
+        // $(".tracks").append(playButton(track.permalink_url));
+        var widget = $('<iframe>', {
+          src: prefix + track.uri,
+          id: "song" + i
+        });
+        $(".tracks").append(widget);
       }
       break;
     case "current-song":
