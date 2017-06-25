@@ -5,11 +5,24 @@ $.getJSON("../config.json", function(data) {
   });
 });
 
-function sendMessage(port, message) {
-  port.postMessage(message);
+var stream = null;
+
+function sendMessage(port, msg, details) {
+  port.postMessage({
+    message: message,
+    content: details
+  });
 }
 
-function sendCurrentSong(port) {
+function displayCurrentSong(port) {
+  // chrome.storage.sync.get("currentTracks", function(tracks) {
+  //   console.log('getting sstored tracks');
+  //   port.postMessage({
+  //     message: "search-results",
+  //     content: Object.values(tracks)
+  //   });
+  // });
+  displayCurrentTrack(port);
   chrome.tabs.query({
     "url": "*://soundcloud.com/*"
   }, function(soundcloudTabs) {
@@ -32,26 +45,82 @@ function sendCurrentSong(port) {
   });
 }
 
+function displayTracks(port, tracks) {
+  port.postMessage({
+    message: "display-tracks",
+    content: tracks
+  });
+}
+
+function displayPreviousSearch(port) {
+  // TODO: will use displayTracks()
+}
+
+function displayCurrentTrack(port) {
+  chrome.storage.sync.get(["currentTrack"], function(obj) {
+    if (chrome.runtime.lastError == null) {
+      port.postMessage({
+        message: "display-current-track",
+        content: obj.currentTrack
+      });
+    }
+  });
+}
+chrome.runtime.onSuspend.addListener(function() {
+  console.log("reloaded the extension");
+});
+
 chrome.runtime.onConnect.addListener(function(port) {
   console.log("Connected to " + port.name);
 
-  sendCurrentSong(port);
+  displayCurrentSong(port);
+  displayPreviousSearch(port);
 
   port.onMessage.addListener(function(msg) {
-    var searchString = msg.content;
-    SC.get("/tracks", {
-      q: searchString,
-      linked_partitioning: 1
-    }).then(function(res) {
-      console.log("message from popup: " + msg);
-      console.log(res);
-      port.postMessage({
-        "message": "search-results",
-        "content": res
-      });
-    }, function(error) {
-      console.log("Error: " + error);
-    });
+    console.log("<MESSAGE INCOMING FROM POPUP>");
+    console.log("Port action: " + msg.message);
+    console.log("Content: " + msg.content);
+    console.log("<END OF MESSAGE>");
+
+    switch (msg.message) {
+      case "play-song":
+        var track = msg.content
+        SC.stream('/tracks/' + track.id).then(function(player) {
+          // player.on('finish', function() { might not be working
+          //   chrome.storage.local.set({
+          //     'currentTrack': ''
+          //   });
+          // })
+          player.play();
+          stream = player;
+        });
+        chrome.storage.sync.set({
+          "currentTrack": track
+        });
+        displayCurrentSong(port);
+        break;
+      case "search":
+        var searchString = msg.content;
+        SC.get("/tracks", {
+          q: searchString,
+          linked_partitioning: 1
+        }).then(function(res) {
+          displayTracks(port, res);
+        });
+      case "pause":
+        if (!!stream) {
+          stream.pause();
+        }
+        break;
+      case "next":
+        break;
+      case "prev":
+        break;
+      case "get-reposts":
+        break;
+      default:
+        break;
+    }
   });
 });
 
@@ -75,6 +144,7 @@ function setPrevPageInfo(tabId, windowId) {
   };
   chrome.storage.sync.set(newPrevInfo);
 }
+
 
 chrome.commands.onCommand.addListener(function(command) {
   switch (command) {

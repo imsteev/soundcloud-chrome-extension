@@ -22,44 +22,62 @@ $("#search-bar").keypress(function(e) {
 //TODO: on clicking the button, un-focus
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {
-    case "search-results":
+    case "display-tracks":
       var tracks = msg.content.collection;
       var nextHref = msg.content.next_href;
-      console.log(tracks);
-      console.log(nextHref);
-      var prefix = "https://w.soundcloud.com/player/?url=";
+
+      // Any way to do an ajax call?
       $(".tracks").empty();
+
       for (var i = 0; i < tracks.length; i++) {
         var track = tracks[i]
-        // $(".tracks").append("<div><p>" + track.uri + "</p></div>");
-        // $(".tracks").append(playButton(track.permalink_url));
-        var widget = $('<iframe>', {
-          src: prefix + track.uri,
-          id: "song" + i
-        });
-        $(".tracks").append(widget);
+        var trackItem = createTrackItem(track);
+        $(".tracks").append(trackItem);
       }
       break;
-    case "current-song":
+    case "display-current-track":
+      $(".current-song").empty();
       var title = msg.content.title;
-      $(".current-song").append("<h4>current song</h4><h3 id='song-name'>" + title + "</h3>");
+      if (title.length > 0) {
+        $(".current-song").append("<h4>current song</h4><h3 id='song-name'>" + title + "</h3>");
+      }
       break;
     default:
       break;
   }
 });
 
-function playButton(url) {
-  var btn = $('<button/>', {
-    text: 'play',
+function createCurrentTrackItem(track) {
+
+}
+
+function createTrackItem(track) {
+  var button = $('<button>', {
+    class: 'button button-rounded',
     click: function() {
-      chrome.tabs.create({
-        url: url,
-        active: false,
-        pinned: true
-      });
+      var trackId = $(this).siblings("input")[0].value;
+      port.postMessage({
+        "message": "play-song",
+        "content": track
+      })
     }
   });
-  return btn
+  button.append($('<i>', {
+    class: 'fa fa-play aria-hidden'
+  }));
+
+  var item = $("<li>");
+  var title = "<h4>" + track.title + "</h4>";
+  var image = $("<img>", {
+    src: track.artwork_url
+  });
+  var trackIdInput = $('<input>', {
+    type: 'hidden',
+    value: track.id
+  });
+
+  $.each([title, image, button, trackIdInput], function(id, elem) {
+    item.append(elem);
+  });
+  return item;
 }
-//TODO: maintain current set of tracks searched, playing song, etc.

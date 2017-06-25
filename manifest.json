@@ -24,7 +24,7 @@
                 "assets/sdk-3.1.2.js",
                 "assets/sc-widget-api.js",
                 "js/background.js"],
-    "persistent": false
+    "persistent" : false
   },
   "content_scripts" : [
     {

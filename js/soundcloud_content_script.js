@@ -6,4 +6,9 @@
 //   return true;
 // }
 // $(".playButton").click();
-console.log("hello from content page");
+console.log("This is the content script in soundcloud.com");
+$(document).ready(function() {
+  console.log("done loading");
+  var firstSongButton = $(".playButton");
+  console.log(firstSongButton);
+});
