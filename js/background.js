@@ -1,12 +1,13 @@
-// Initialize soundcloud API with client key
+// Initialization --------------------------------------------------------------
 $.getJSON("../config.json", function(data) {
+  console.log('initialized');
   SC.initialize({
     client_id: data["soundcloud_client_id"]
   });
 });
-
+chrome.storage.sync.clear();
 var stream = null;
-
+// -----------------------------------------------------------------------------
 function sendMessage(port, msg, details) {
   port.postMessage({
     message: message,
@@ -38,7 +39,7 @@ function displayCurrentSong(port) {
       currentlyPlaying = audibleTabs[0];
       console.log(currentlyPlaying);
       port.postMessage({
-        "message": "current-song",
+        "message": "display-current-track",
         "content": currentlyPlaying
       });
     }
@@ -53,12 +54,24 @@ function displayTracks(port, tracks) {
 }
 
 function displayPreviousSearch(port) {
-  // TODO: will use displayTracks()
+  chrome.storage.sync.get(["previousSearch"], function(obj) {
+    if ((chrome.runtime.lastError == null) && ('previousSearch' in obj)) {
+      SC.get('/tracks', obj.previousSearch).then(function(res) {
+        console.log("previous search is: ")
+        console.log(obj.previousSearch);
+        displayTracks(port, res);
+      });
+    }
+  });
 }
 
 function displayCurrentTrack(port) {
   chrome.storage.sync.get(["currentTrack"], function(obj) {
-    if (chrome.runtime.lastError == null) {
+    if (chrome.runtime.lastError == null &&
+      ('currentTrack' in obj) &&
+      (!$.isEmptyObject(obj.currentTrack))) {
+      console.log("current track is: ");
+      console.log(obj);
       port.postMessage({
         message: "display-current-track",
         content: obj.currentTrack
@@ -86,12 +99,23 @@ chrome.runtime.onConnect.addListener(function(port) {
       case "play-song":
         var track = msg.content
         SC.stream('/tracks/' + track.id).then(function(player) {
-          // player.on('finish', function() { might not be working
-          //   chrome.storage.local.set({
-          //     'currentTrack': ''
-          //   });
-          // })
+          player.on('state-change', function() {
+            console.log('state changed');
+          })
+          player.on('finish', function() {
+            chrome.storage.sync.set({
+              'currentTrack': {}
+            });
+          })
+          player.on('buffering_start', function() {
+            console.log('buffering start');
+          })
+          player.on('buffering_end', function() {
+            console.log('end buffering');
+          })
+
           player.play();
+
           stream = player;
         });
         chrome.storage.sync.set({
@@ -101,10 +125,19 @@ chrome.runtime.onConnect.addListener(function(port) {
         break;
       case "search":
         var searchString = msg.content;
+        var searchInfo = {
+          q: searchString,
+          linked_partitioning: 1
+        }
         SC.get("/tracks", {
           q: searchString,
           linked_partitioning: 1
         }).then(function(res) {
+          console.log("Search info: ");
+          console.log(searchInfo);
+          chrome.storage.sync.set({
+            "previousSearch": searchInfo
+          });
           displayTracks(port, res);
         });
       case "pause":

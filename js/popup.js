@@ -37,8 +37,10 @@ port.onMessage.addListener(function(msg, sender, response) {
       break;
     case "display-current-track":
       $(".current-song").empty();
-      var title = msg.content.title;
-      if (title.length > 0) {
+      if (msg.content !== undefined && msg.content !== {}) {
+        console.log("mesage content");
+        console.log(msg.content);
+        var title = msg.content.title;
         $(".current-song").append("<h4>current song</h4><h3 id='song-name'>" + title + "</h3>");
       }
       break;
