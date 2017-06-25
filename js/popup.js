@@ -54,32 +54,32 @@ function createCurrentTrackItem(track) {
 }
 
 function createTrackItem(track) {
-  var button = $('<button>', {
-    class: 'button button-rounded',
-    click: function() {
-      var trackId = $(this).siblings("input")[0].value;
-      port.postMessage({
-        "message": "play-song",
-        "content": track
-      })
-    }
-  });
-  button.append($('<i>', {
-    class: 'fa fa-play aria-hidden'
-  }));
+    var button = $('<button>', {
+      class: 'button button-rounded',
+      click: function() {
+        var trackId = $(this).siblings("input")[0].value;
+        port.postMessage({
+          "message": "play-song",
+          "content": track
+        })
+      }
+    });
+    button.append($('<i>', {
+      class: 'fa fa-play aria-hidden'
+    }));
 
-  var item = $("<li>");
-  var title = "<h4>" + track.title + "</h4>";
-  var image = $("<img>", {
-    src: track.artwork_url
-  });
-  var trackIdInput = $('<input>', {
-    type: 'hidden',
-    value: track.id
-  });
+    var item = $("<li>");
+    var title = "<h4>" + track.title + "</h4>";
+    var image = $("<img>", {
+      src: track.artwork_url
+    });
+    var trackIdInput = $('<input>', {
+      type: 'hidden',
+      value: track.id
+    });
 
-  $.each([title, image, button, trackIdInput], function(id, elem) {
-    item.append(elem);
-  });
-  return item;
+    $.each([title, image, button, trackIdInput], function(id, elem) {
+      item.append(elem);
+    });
+    return item;
 }

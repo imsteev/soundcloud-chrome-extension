@@ -15,14 +15,15 @@ input:focus {
   background: gold;
 }
 
+li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
 .fa-soundcloud {
   color: black;
 }
 
-iframe {
-  width: 100%;
-  frameborder="no";
-}
 .current-song {
   text-indent: 10px;
 }

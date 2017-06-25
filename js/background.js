@@ -95,87 +95,85 @@ chrome.runtime.onConnect.addListener(function(port) {
     console.log("Content: " + msg.content);
     console.log("<END OF MESSAGE>");
 
-    switch (msg.message) {
+    var content = msg.content;
+    var message = msg.message;
+    switch (message) {
       case "play-song":
-        var track = msg.content
-        SC.stream('/tracks/' + track.id).then(function(player) {
-          player.on('state-change', function() {
-            console.log('state changed');
-          })
-          player.on('finish', function() {
-            chrome.storage.sync.set({
-              'currentTrack': {}
-            });
-          })
-          player.on('buffering_start', function() {
-            console.log('buffering start');
-          })
-          player.on('buffering_end', function() {
-            console.log('end buffering');
-          })
+          var track = content;
+          SC.stream('/tracks/' + track.id).then(function(player) {
+            player.on('state-change', function(state) {
+              console.log('state changed ' + state);
+            })
+            player.on('finish', function() {
+              chrome.storage.sync.set({
+                'currentTrack': {}
+              });
+            })
+            player.on('buffering_start', function() {
+              console.log('buffering start');
+            })
+            player.on('buffering_end', function() {
+              console.log('end buffering');
+            })
 
-          player.play();
+            player.play();
 
-          stream = player;
-        });
-        chrome.storage.sync.set({
-          "currentTrack": track
-        });
-        displayCurrentSong(port);
-        break;
-      case "search":
-        var searchString = msg.content;
-        var searchInfo = {
-          q: searchString,
-          linked_partitioning: 1
-        }
-        SC.get("/tracks", {
-          q: searchString,
-          linked_partitioning: 1
-        }).then(function(res) {
-          console.log("Search info: ");
-          console.log(searchInfo);
-          chrome.storage.sync.set({
-            "previousSearch": searchInfo
+            stream = player;
           });
-          displayTracks(port, res);
-        });
+          chrome.storage.sync.set({
+            "currentTrack": track
+          });
+          displayCurrentSong(port);
+          break;
+      case "search":
+          var searchString = content;
+          var searchInfo = {
+            q: searchString,
+            linked_partitioning: 1
+          }
+          SC.get("/tracks", {
+            q: searchString,
+            linked_partitioning: 1
+          }).then(function(res) {
+            console.log("Search info: ");
+            console.log(searchInfo);
+            chrome.storage.sync.set({
+              "previousSearch": searchInfo
+            });
+            displayTracks(port, res);
+          });
       case "pause":
         if (!!stream) {
           stream.pause();
         }
         break;
       case "next":
-        break;
+          break;
       case "prev":
-        break;
+          break;
       case "get-reposts":
-        break;
+          break;
       default:
-        break;
+          break;
     }
   });
 });
 
 // --------- KEYBOARD SHORTCUT LISTENERS -------------------------------------
 function switchToTabInWindow(tabId, windowId) {
-  var windowUpdateInfo = {
-    "focused": true
-  };
-  chrome.windows.update(windowId, windowUpdateInfo);
-  // TODO: not all tabs will have an id.
-  var tabUpdateInfo = {
-    "active": true
-  };
-  chrome.tabs.update(tabId, tabUpdateInfo);
+    var windowUpdateInfo = { "focused": true };
+    chrome.windows.update(windowId, windowUpdateInfo);
+
+    var tabUpdateInfo = { "active": true };
+    chrome.tabs.update(tabId, tabUpdateInfo);
 }
 
 function setPrevPageInfo(tabId, windowId) {
-  var newPrevInfo = {
-    "prevTabId": tabId,
-    "prevWindowId": windowId
-  };
-  chrome.storage.sync.set(newPrevInfo);
+    var newPrevInfo = {
+      "prevTabId": tabId,
+      "prevWindowId": windowId
+    };
+    chrome.storage.sync.set(newPrevInfo);
 }
 
 
