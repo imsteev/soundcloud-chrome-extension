@@ -1,0 +1,45 @@
+@mixin topX($x) {
+    margin-top: $x;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: lightgrey;
+  text-indent: 2px;
+}
+
+.popup {
+    background: gold;
+    width: 420px;
+    height: auto;
+
+    .row {
+        @include topX(10px);
+    }
+
+    .title {
+        .fa-soundcloud {
+            color: black;
+        }
+    }
+
+    .current-song {
+    text-indent: 10px;
+    }
+
+    input:focus {
+        outline: none;
+    }
+}
+
+#song-name {
+
+}
+
+#search-bar {
+  height: 30px;
+  width: 270px;
+}
+
+#search {
+  margin-left: 30px;
+}
