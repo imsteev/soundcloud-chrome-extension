@@ -131,19 +131,20 @@ chrome.runtime.onConnect.addListener(function(port) {
             q: searchString,
             linked_partitioning: 1
           }
-          SC.get("/tracks", {
-            q: searchString,
-            linked_partitioning: 1
-          }).then(function(res) {
+          SC.get("/tracks", searchInfo).then(function(res) {
             console.log("Search info: ");
             console.log(searchInfo);
+            console.log(res);
             chrome.storage.sync.set({
               "previousSearch": searchInfo
             });
+            console.log("WHATTTTT");
             displayTracks(port, res);
           });
+          break;
       case "pause":
         if (!!stream) {
+          console.log("what");
           stream.pause();
         }
         break;
@@ -153,6 +154,12 @@ chrome.runtime.onConnect.addListener(function(port) {
           break;
       case "get-reposts":
           break;
+      case "next-tracks":
+        var nextHref = content;
+        $.getJSON(nextHref, function(res) {
+          console.log(res)
+          displayTracks(port,res);
+        });
       default:
           break;
     }
