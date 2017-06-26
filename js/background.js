@@ -89,11 +89,38 @@ chrome.runtime.onConnect.addListener(function(port) {
   clearPagination();
   displayCurrentSong(port);
   displayPreviousSearch(port);
-  console.log(port.onMessage);
-  port.onMessage.addListener(function(msg) {
+  console.log(port.onMessage.removeListener);
+  port.onMessage.addListener(createListener(port));
+});
+
+
+// Assumes valid API url from soundcloud
+function getPrevHref(url) {
+  var oldUrl = url.split('?');
+  var params = $.parseParams(oldUrl[1]);
+  if (params.offset > 0) {
+    params.offset = Number.parseInt(params.offset) - Number.parseInt(params.limit);
+  }
+  return oldUrl[0] + "?" + $.param(params);
+}
+
+function getNextHref(url) {
+  var oldUrl = url.split('?');
+  var params = $.parseParams(oldUrl[1]);
+  params.offset = Number.parseInt(params.offset) + Number.parseInt(params.limit);
+  return oldUrl[0] + "?" + $.param(params);
+}
+
+function clearPagination() {
+  chrome.storage.sync.remove(["prevTracks", "nextTracks"])
+}
+
+
+function createListener(port) {
+  var listener = function(msg) {
+    n += 1;
       //TODO: On each successive message in a row (e.g not closing the popup),
       //      you're adding another listener. Need to remove 'previous' listener.
-
     console.log("<MESSAGE INCOMING FROM POPUP>");
     console.log("Port action: " + msg.message);
     console.log("Content: " + msg.content);
@@ -156,8 +183,9 @@ chrome.runtime.onConnect.addListener(function(port) {
           break;
       case "next-tracks":
         var currentTrackHref = content;
+        console.log(currentTrackHref);
         $.getJSON(currentTrackHref, function(res) {
-          console.log(res)
+          
           displayTracks(port,res);
           chrome.storage.sync.set({"prevTracks" : getPrevHref(currentTrackHref) });
         });        
@@ -167,6 +195,7 @@ chrome.runtime.onConnect.addListener(function(port) {
           if (chrome.runtime.lastError == null && !$.isEmptyObject(obj)) {
             var currentTrackHref = obj.prevTracks;
             $.getJSON(obj.prevTracks, function(res) {
+              //TODO THIS IS SO BUGGY WHY IS IT BEING CALLED SO MANY TIMES :C 
               displayTracks(port,res);
               chrome.storage.sync.set({"prevTracks" : getPrevHref(currentTrackHref) });
             });
@@ -176,30 +205,10 @@ chrome.runtime.onConnect.addListener(function(port) {
       default:
           break;
     }
-  });
-});
-
-
-// Assumes valid API url from soundcloud
-function getPrevHref(url) {
-  var oldUrl = url.split('?');
-  var params = $.parseParams(oldUrl[1]);
-  if (params.offset > 0) {
-    params.offset = Number.parseInt(params.offset) - Number.parseInt(params.limit);
   }
-  return oldUrl[0] + "?" + $.param(params);
+  return listener;
 }
 
-function getNextHref(url) {
-  var oldUrl = url.split('?');
-  var params = $.parseParams(oldUrl[1]);
-  params.offset = Number.parseInt(params.offset) + Number.parseInt(params.limit);
-  return oldUrl[0] + "?" + $.param(params);
-}
-
-function clearPagination() {
-  chrome.storage.sync.remove(["prevTracks", "nextTracks"])
-}
 
 // --------- KEYBOARD SHORTCUT LISTENERS -------------------------------------
 function switchToTabInWindow(tabId, windowId) {
