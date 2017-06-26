@@ -173,6 +173,17 @@ chrome.runtime.onConnect.addListener(function(port) {
       case "prev-tracks":
         chrome.storage.sync.get("prevTracks", function(obj) {
           if (chrome.runtime.lastError == null && !$.isEmptyObject(obj)) {
+            console.log(obj);
+            var prevHref = obj.prevHref;
+            var oldPrevHref = obj.prevHref;
+            var oldUrl = oldPrevHref.split('?');
+            var params = $.parseParams(oldPrevHref[1]);
+            if (params.offset > 0) {
+              params.offset -= params.limit;
+              prevHref = oldUrl[0] + '?' + $.param(params)
+            }
+            // Need to also set current pagination, or just clear the pagination on exit of popup
+            chrome.storage.sync.set({"prevTracks" : prevHref});
             $.getJSON(obj.prevTracks, function(res) {
               console.log(res);
               displayTracks(port,res);
