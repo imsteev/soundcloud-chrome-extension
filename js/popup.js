@@ -19,6 +19,13 @@ $("#search-bar").keypress(function(e) {
   }
 });
 
+port.onDisconnect.addListener(function(port) {
+  port.postMessage({
+    message: "disconnecting...",
+    content: "hello"
+  })
+});
+
 //TODO: on clicking the button, un-focus
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {

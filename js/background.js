@@ -7,6 +7,7 @@ $.getJSON("../config.json", function(data) {
 });
 chrome.storage.sync.clear();
 var stream = null;
+var n = 0;
 // -----------------------------------------------------------------------------
 function sendMessage(port, msg, details) {
   port.postMessage({
@@ -82,12 +83,17 @@ chrome.runtime.onSuspend.addListener(function() {
 });
 
 chrome.runtime.onConnect.addListener(function(port) {
-  console.log("Connected to " + port.name);
+  console.log("Connected to " + port.name + " " + n);
+  n += 1;
 
+  clearPagination();
   displayCurrentSong(port);
   displayPreviousSearch(port);
-
+  console.log(port.onMessage);
   port.onMessage.addListener(function(msg) {
+      //TODO: On each successive message in a row (e.g not closing the popup),
+      //      you're adding another listener. Need to remove 'previous' listener.
+
     console.log("<MESSAGE INCOMING FROM POPUP>");
     console.log("Port action: " + msg.message);
     console.log("Content: " + msg.content);
@@ -161,7 +167,6 @@ chrome.runtime.onConnect.addListener(function(port) {
           if (chrome.runtime.lastError == null && !$.isEmptyObject(obj)) {
             var currentTrackHref = obj.prevTracks;
             $.getJSON(obj.prevTracks, function(res) {
-              console.log(res);
               displayTracks(port,res);
               chrome.storage.sync.set({"prevTracks" : getPrevHref(currentTrackHref) });
             });
@@ -193,7 +198,7 @@ function getNextHref(url) {
 }
 
 function clearPagination() {
-  chrome.storage.sync.remove(["prevTracks"])
+  chrome.storage.sync.remove(["prevTracks", "nextTracks"])
 }
 
 // --------- KEYBOARD SHORTCUT LISTENERS -------------------------------------
