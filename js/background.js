@@ -70,8 +70,6 @@ function displayCurrentTrack(port) {
     if (chrome.runtime.lastError == null &&
       ('currentTrack' in obj) &&
       (!$.isEmptyObject(obj.currentTrack))) {
-      console.log("current track is: ");
-      console.log(obj);
       port.postMessage({
         message: "display-current-track",
         content: obj.currentTrack
@@ -129,22 +127,18 @@ chrome.runtime.onConnect.addListener(function(port) {
           var searchString = content;
           var searchInfo = {
             q: searchString,
+            limit: 10,
             linked_partitioning: 1
           }
           SC.get("/tracks", searchInfo).then(function(res) {
-            console.log("Search info: ");
-            console.log(searchInfo);
-            console.log(res);
             chrome.storage.sync.set({
               "previousSearch": searchInfo
             });
-            console.log("WHATTTTT");
             displayTracks(port, res);
           });
           break;
       case "pause":
         if (!!stream) {
-          console.log("what");
           stream.pause();
         }
         break;
@@ -155,38 +149,21 @@ chrome.runtime.onConnect.addListener(function(port) {
       case "get-reposts":
           break;
       case "next-tracks":
-        var nextHref = content;
-        $.getJSON(nextHref, function(res) {
+        var currentTrackHref = content;
+        $.getJSON(currentTrackHref, function(res) {
           console.log(res)
           displayTracks(port,res);
-        });
-        // TODO: ERROR HANDLING
-        var prevHref = nextHref;
-        var oldUrl = nextHref.split('?');
-        var params = $.parseParams(oldUrl[1]);
-        if (params.offset === params.limit) {
-          params.offset = 0;
-          prevHref = oldUrl[0] + '?' + $.param(params)
-        }
-        chrome.storage.sync.set({"prevTracks" : prevHref });
+          chrome.storage.sync.set({"prevTracks" : getPrevHref(currentTrackHref) });
+        });        
         break;
       case "prev-tracks":
         chrome.storage.sync.get("prevTracks", function(obj) {
           if (chrome.runtime.lastError == null && !$.isEmptyObject(obj)) {
-            console.log(obj);
-            var prevHref = obj.prevHref;
-            var oldPrevHref = obj.prevHref;
-            var oldUrl = oldPrevHref.split('?');
-            var params = $.parseParams(oldPrevHref[1]);
-            if (params.offset > 0) {
-              params.offset -= params.limit;
-              prevHref = oldUrl[0] + '?' + $.param(params)
-            }
-            // Need to also set current pagination, or just clear the pagination on exit of popup
-            chrome.storage.sync.set({"prevTracks" : prevHref});
+            var currentTrackHref = obj.prevTracks;
             $.getJSON(obj.prevTracks, function(res) {
               console.log(res);
               displayTracks(port,res);
+              chrome.storage.sync.set({"prevTracks" : getPrevHref(currentTrackHref) });
             });
           }
         });
@@ -196,6 +173,28 @@ chrome.runtime.onConnect.addListener(function(port) {
     }
   });
 });
+
+
+// Assumes valid API url from soundcloud
+function getPrevHref(url) {
+  var oldUrl = url.split('?');
+  var params = $.parseParams(oldUrl[1]);
+  if (params.offset > 0) {
+    params.offset = Number.parseInt(params.offset) - Number.parseInt(params.limit);
+  }
+  return oldUrl[0] + "?" + $.param(params);
+}
+
+function getNextHref(url) {
+  var oldUrl = url.split('?');
+  var params = $.parseParams(oldUrl[1]);
+  params.offset = Number.parseInt(params.offset) + Number.parseInt(params.limit);
+  return oldUrl[0] + "?" + $.param(params);
+}
+
+function clearPagination() {
+  chrome.storage.sync.remove(["prevTracks"])
+}
 
 // --------- KEYBOARD SHORTCUT LISTENERS -------------------------------------
 function switchToTabInWindow(tabId, windowId) {
@@ -264,7 +263,6 @@ chrome.commands.onCommand.addListener(function(command) {
       break;
   }
 });
-
 
 // https://gist.github.com/kares/956897
 (function($) {
