@@ -32,6 +32,14 @@ port.onMessage.addListener(function(msg, sender, response) {
           content: nextHref
         });        
       });
+
+      $("#prev-tracks").on('click', function() {
+        port.postMessage({
+          message: "prev-tracks",
+          content: nextHref
+        });        
+      });
+
       // Any way to do an ajax call?
       $(".tracks").empty();
 
