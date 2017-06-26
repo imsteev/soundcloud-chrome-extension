@@ -19,13 +19,6 @@ $("#search-bar").keypress(function(e) {
   }
 });
 
-port.onDisconnect.addListener(function(port) {
-  port.postMessage({
-    message: "disconnecting...",
-    content: "hello"
-  })
-});
-
 //TODO: on clicking the button, un-focus
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {
@@ -33,6 +26,7 @@ port.onMessage.addListener(function(msg, sender, response) {
       var tracks = msg.content.collection;
       var nextHref = msg.content.next_href;
 
+      $("#next-tracks").off('click');
       $("#next-tracks").on('click', function() {
         port.postMessage({
           message: "next-tracks",
@@ -40,6 +34,7 @@ port.onMessage.addListener(function(msg, sender, response) {
         });        
       });
 
+      $("#prev-tracks").off('click');
       $("#prev-tracks").on('click', function() {
         port.postMessage({
           message: "prev-tracks",
