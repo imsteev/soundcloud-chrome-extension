@@ -6,11 +6,11 @@
 
   "browser_action": {
     "default_title": "Soundcloud Player",
-    "default_popup": "html/popup.html",
+    "default_popup": "extension/html/popup.html",
     "default_icon": {
-      "16": "assets/note16.png",
-      "48": "assets/note48.png",
-      "128": "assets/note128.png"
+      "16": "extension/img/note16.png",
+      "48": "extension/img/note48.png",
+      "128": "extension/img/note128.png"
     }
   },
   "permissions": [
@@ -20,18 +20,18 @@
     "https://*/*"
   ],
   "background": {
-    "scripts": ["assets/jquery-3.2.1.min.js",
-                "assets/sdk-3.1.2.js",
-                "assets/sc-widget-api.js",
-                "js/background.js"],
+    "scripts": ["vendor/jquery-3.2.1.min.js",
+                "vendor/sdk-3.1.2.js",
+                "vendor/sc-widget-api.js",
+                "extension/js/background.js"],
     "persistent" : false
   },
   "content_scripts" : [
     {
       "matches" : ["http://soundcloud.com/*", "https://soundcloud.com/*"],
-      "js" : ["assets/jquery-3.2.1.min.js",
-              "assets/sdk-3.1.2.js",
-              "js/soundcloud_content_script.js"],
+      "js" : ["vendor/jquery-3.2.1.min.js",
+              "vendor/sdk-3.1.2.js",
+              "extension/js/soundcloud_content_script.js"],
       "all_frames" : true
     }
   ],

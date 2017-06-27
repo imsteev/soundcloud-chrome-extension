@@ -84,12 +84,10 @@ chrome.runtime.onSuspend.addListener(function() {
 
 chrome.runtime.onConnect.addListener(function(port) {
   console.log("Connected to " + port.name + " " + n);
-  n += 1;
-
+  
   clearPagination();
   displayCurrentSong(port);
   displayPreviousSearch(port);
-  console.log(port.onMessage.removeListener);
   port.onMessage.addListener(createListener(port));
 });
 
@@ -114,6 +112,7 @@ function getNextHref(url) {
 function clearPagination() {
   chrome.storage.sync.remove(["prevTracks", "nextTracks"])
 }
+
 
 
 function createListener(port) {

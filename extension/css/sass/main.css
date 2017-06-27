@@ -1,0 +1,26 @@
+::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
+  color: lightgrey;
+  text-indent: 2px; }
+
+.popup {
+  background: gold;
+  width: 420px;
+  height: auto; }
+  .popup .row {
+    margin-top: 10px; }
+  .popup .title .fa-soundcloud {
+    color: black; }
+  .popup .current-song {
+    text-indent: 10px; }
+  .popup input:focus {
+    outline: none; }
+
+#search-bar {
+  height: 30px;
+  width: 270px; }
+
+#search {
+  margin-left: 30px; }
+
+/*# sourceMappingURL=main.css.map */
