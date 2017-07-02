@@ -21,7 +21,7 @@ As a user, I want to have access to Soundcloud and its resources wherever I am i
 * [Soundcloud API](https://developers.soundcloud.com/docs/api/)
 
 ## Technology
-* [Javascript/jQuery](https://www.javascript.com/)
+* [Javascript](https://www.javascript.com/)/[jQuery](https://jquery.com/)
 * [Bootstrap 3](http://getbootstrap.com/)
 * [Sass](http://sass-lang.com/)
 * [HTML5](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)
