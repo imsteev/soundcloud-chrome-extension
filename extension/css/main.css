@@ -9,10 +9,21 @@
   height: auto; }
   .popup .row {
     margin-top: 10px; }
+  .popup .tracks li {
+    list-style: none;
+    padding-left: 5px; }
+    .popup .tracks li button {
+      margin-left: 20px;
+      background-color: transparent; }
   .popup .title .fa-soundcloud {
     color: black; }
+  .popup .all-tracks button {
+    width: 100%; }
   .popup .current-song {
     text-indent: 10px; }
+    .popup .current-song img {
+      margin-left: 160px;
+      align-content: center; }
   .popup input:focus {
     outline: none; }
 

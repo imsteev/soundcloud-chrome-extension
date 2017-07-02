@@ -5,6 +5,7 @@ $.getJSON("../config.json", function(data) {
     client_id: data["soundcloud_client_id"]
   });
 });
+
 chrome.storage.sync.clear();
 var stream = null;
 var n = 0;
@@ -17,13 +18,7 @@ function sendMessage(port, msg, details) {
 }
 
 function displayCurrentSong(port) {
-  // chrome.storage.sync.get("currentTracks", function(tracks) {
-  //   console.log('getting sstored tracks');
-  //   port.postMessage({
-  //     message: "search-results",
-  //     content: Object.values(tracks)
-  //   });
-  // });
+
   displayCurrentTrack(port);
   chrome.tabs.query({
     "url": "*://soundcloud.com/*"
@@ -38,7 +33,6 @@ function displayCurrentSong(port) {
         return;
       }
       currentlyPlaying = audibleTabs[0];
-      console.log(currentlyPlaying);
       port.postMessage({
         "message": "display-current-track",
         "content": currentlyPlaying
@@ -58,8 +52,6 @@ function displayPreviousSearch(port) {
   chrome.storage.sync.get(["previousSearch"], function(obj) {
     if ((chrome.runtime.lastError == null) && ('previousSearch' in obj)) {
       SC.get('/tracks', obj.previousSearch).then(function(res) {
-        console.log("previous search is: ")
-        console.log(obj.previousSearch);
         displayTracks(port, res);
       });
     }
@@ -133,7 +125,7 @@ function createListener(port) {
           SC.stream('/tracks/' + track.id).then(function(player) {
             player.on('state-change', function(state) {
               console.log('state changed ' + state);
-            })
+            });
             player.on('finish', function() {
               chrome.storage.sync.set({
                 'currentTrack': {}
@@ -193,8 +185,7 @@ function createListener(port) {
         chrome.storage.sync.get("prevTracks", function(obj) {
           if (chrome.runtime.lastError == null && !$.isEmptyObject(obj)) {
             var currentTrackHref = obj.prevTracks;
-            $.getJSON(obj.prevTracks, function(res) {
-              //TODO THIS IS SO BUGGY WHY IS IT BEING CALLED SO MANY TIMES :C 
+            $.getJSON(obj.prevTracks, function(res) { 
               displayTracks(port,res);
               chrome.storage.sync.set({"prevTracks" : getPrevHref(currentTrackHref) });
             });

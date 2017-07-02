@@ -19,6 +19,10 @@ $("#search-bar").keypress(function(e) {
   }
 });
 
+$("#show-tracks").on('click', function () {
+  $(".tracks").toggle();
+});
+
 //TODO: on clicking the button, un-focus
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {
@@ -47,7 +51,7 @@ port.onMessage.addListener(function(msg, sender, response) {
 
       for (var i = 0; i < tracks.length; i++) {
         var track = tracks[i]
-        var trackItem = createTrackItem(track);
+        var trackItem = createTrackItem(port,track);
         $(".tracks").append(trackItem);
       }
       break;
@@ -56,8 +60,11 @@ port.onMessage.addListener(function(msg, sender, response) {
       if (msg.content !== undefined && msg.content !== {}) {
         console.log("mesage content");
         console.log(msg.content);
-        var title = msg.content.title;
-        $(".current-song").append("<h4>current song</h4><h3 id='song-name'>" + title + "</h3>");
+        var track = msg.content;
+        $(".current-song").append("<h4>current song</h4><h4 id='song-name'>" + track.title + "</h4>");
+        $(".current-song").append($("<img>", {
+          src: track.artwork_url
+        }));
       }
       break;
     default:
@@ -69,9 +76,9 @@ function createCurrentTrackItem(track) {
 
 }
 
-function createTrackItem(track) {
+function createTrackItem(port, track) {
     var button = $('<button>', {
-      class: 'button button-rounded',
+      class: 'button button-square',
       click: function() {
         var trackId = $(this).siblings("input")[0].value;
         port.postMessage({
@@ -85,16 +92,14 @@ function createTrackItem(track) {
     }));
 
     var item = $("<li>");
-    var title = "<h4>" + track.title + "</h4>";
-    var image = $("<img>", {
-      src: track.artwork_url
-    });
+    var title = "<span>" + track.title + "</span>";
     var trackIdInput = $('<input>', {
       type: 'hidden',
+      name: 'track-id',
       value: track.id
     });
 
-    $.each([title, image, button, trackIdInput], function(id, elem) {
+    $.each([title, button, trackIdInput], function(id, elem) {
       item.append(elem);
     });
     return item;
