@@ -8,15 +8,34 @@
 }
 
 .popup {
-    background: gold;
+    background: whitesmoke;
     width: 420px;
     height: auto;
 
     .row {
-        @include topX(10px);
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .find-header {
+        margin-top: 20px;
+    }
+
+    .current-song-header {
+        color: seagreen;
+        text-indent: 10px;
+    }
+
+    .controls {
+        margin-top: 10px;
+    }
+
+    .search-div {
+        margin-top: 10px;
     }
 
     .tracks {
+        text-indent: 10px;
         li {
             list-style: none;
             padding-left: 5px;
@@ -29,7 +48,7 @@
 
     .title {
         .fa-soundcloud {
-            color: black;
+            color: orange;
         }
     }
 
@@ -38,11 +57,10 @@
             width: 100%;
         }
     }
-    .current-song {
-        text-indent: 10px;
 
+    .current-song {
+        text-align: center;
         img {
-            margin-left:160px;
             align-content: center;
         }
     }
@@ -57,8 +75,8 @@
 }
 
 #search-bar {
-  height: 30px;
-  width: 270px;
+    height: 30px;
+    width: 270px;
 }
 
 #search {

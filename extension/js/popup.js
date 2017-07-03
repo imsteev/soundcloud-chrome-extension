@@ -5,7 +5,6 @@ var port = chrome.runtime.connect({
 $("#search").on('click', function() {
   var searchString = $("#search-bar").val();
   if (searchString.length > 0) {
-    console.log(searchString);
     port.postMessage({
       "message": "search",
       "content": searchString
@@ -23,7 +22,6 @@ $("#show-tracks").on('click', function () {
   $(".tracks").toggle();
 });
 
-//TODO: on clicking the button, un-focus
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {
     case "display-tracks":
@@ -51,7 +49,10 @@ port.onMessage.addListener(function(msg, sender, response) {
 
       for (var i = 0; i < tracks.length; i++) {
         var track = tracks[i]
-        var trackItem = createTrackItem(port,track);
+        var prevTrack = i > 0 ? tracks[i-1] : tracks[tracks.length-1];
+        var nextTrack = i < tracks.length - 1 ? tracks[i+1] : tracks[0];
+
+        var trackItem = createTrackItem(port,track,prevTrack,nextTrack);
         $(".tracks").append(trackItem);
       }
       break;
@@ -61,7 +62,11 @@ port.onMessage.addListener(function(msg, sender, response) {
         console.log("mesage content");
         console.log(msg.content);
         var track = msg.content;
-        $(".current-song").append("<h4>current song</h4><h4 id='song-name'>" + track.title + "</h4>");
+        var trackHeader = $("<h4>", {
+          id : 'current-track-header',
+          text : track.title
+        });
+        $(".current-song").append(trackHeader);
         $(".current-song").append($("<img>", {
           src: track.artwork_url
         }));
@@ -76,7 +81,7 @@ function createCurrentTrackItem(track) {
 
 }
 
-function createTrackItem(port, track) {
+function createTrackItem(port, track,prevTrack, nextTrack) {
     var button = $('<button>', {
       class: 'button button-square',
       click: function() {
@@ -99,7 +104,19 @@ function createTrackItem(port, track) {
       value: track.id
     });
 
-    $.each([title, button, trackIdInput], function(id, elem) {
+    var prevTrackIdInput = $('<input>', {
+      type: 'hidden',
+      name: 'prev-track-id',
+      value: prevTrack.id
+    });
+
+    var nextTrackIdInput = $('<input>', {
+      type: 'hidden',
+      name: 'next-track-id',
+      value: nextTrack.id
+    });
+
+    $.each([title, button, trackIdInput, prevTrackIdInput, nextTrackIdInput], function(id, elem) {
       item.append(elem);
     });
     return item;
