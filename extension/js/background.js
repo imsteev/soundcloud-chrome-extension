@@ -161,9 +161,9 @@ function createListener(port) {
             displayTracks(port, res);
           });
           break;
-      case "pause":
+      case "toggle":
         if (!!stream) {
-          stream.pause();
+          stream.toggle();
         }
         break;
       case "next":

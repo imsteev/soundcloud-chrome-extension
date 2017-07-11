@@ -22,6 +22,7 @@ $("#show-tracks").on('click', function () {
   $(".tracks").toggle();
 });
 
+
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {
     case "display-tracks":
@@ -59,8 +60,6 @@ port.onMessage.addListener(function(msg, sender, response) {
     case "display-current-track":
       $(".current-song").empty();
       if (msg.content !== undefined && msg.content !== {}) {
-        console.log("mesage content");
-        console.log(msg.content);
         var track = msg.content;
         var trackHeader = $("<h4>", {
           id : 'current-track-header',
@@ -70,6 +69,31 @@ port.onMessage.addListener(function(msg, sender, response) {
         $(".current-song").append($("<img>", {
           src: track.artwork_url
         }));
+        var btn = $("<button />", {
+          click: function () {
+            port.postMessage({
+              "message": "toggle",
+              "content": {}
+            });
+            var off = $(this).children(".off");
+            var on  = $(this).children(".on");
+
+            on.removeClass("on");
+            on.addClass("hidden off");
+            
+            off.removeClass("hidden off");
+            off.addClass("on");
+          },  
+          id: "toggle-song",
+          class: "button button-tiny button-action-flat playing"
+        });
+        btn.append($("<i>", {
+          class: "fa fa-pause on"
+        }));
+        btn.append($("<i>", {
+          class: "fa fa-play hidden off"
+        }));
+        $(".current-song").append(btn)
       }
       break;
     default:

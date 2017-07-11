@@ -29,6 +29,8 @@
         background-color: transparent; }
   .popup .title .fa-soundcloud {
     color: orange; }
+  .popup .playing {
+    margin-left: 40px; }
   .popup .all-tracks button {
     width: 100%; }
   .popup .current-song {
