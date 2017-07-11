@@ -1,13 +1,13 @@
 var port = chrome.runtime.connect({
-  "name": "soundcloud query port"
+  name: "soundcloud query port"
 });
 
-$("#search").on('click', function() {
+$("#search").on("click", function() {
   var searchString = $("#search-bar").val();
   if (searchString.length > 0) {
     port.postMessage({
-      "message": "search",
-      "content": searchString
+      message: "search",
+      content: searchString
     });
   }
 });
@@ -18,10 +18,9 @@ $("#search-bar").keypress(function(e) {
   }
 });
 
-$("#show-tracks").on('click', function () {
+$("#show-tracks").on("click", function() {
   $(".tracks").toggle();
 });
-
 
 port.onMessage.addListener(function(msg, sender, response) {
   switch (msg.message) {
@@ -29,31 +28,31 @@ port.onMessage.addListener(function(msg, sender, response) {
       var tracks = msg.content.collection;
       var nextHref = msg.content.next_href;
 
-      $("#next-tracks").off('click');
-      $("#next-tracks").on('click', function() {
+      $("#next-tracks").off("click");
+      $("#next-tracks").on("click", function() {
         port.postMessage({
           message: "next-tracks",
           content: nextHref
-        });        
+        });
       });
 
-      $("#prev-tracks").off('click');
-      $("#prev-tracks").on('click', function() {
+      $("#prev-tracks").off("click");
+      $("#prev-tracks").on("click", function() {
         port.postMessage({
           message: "prev-tracks",
           content: nextHref
-        });        
+        });
       });
 
       // Any way to do an ajax call?
       $(".tracks").empty();
 
       for (var i = 0; i < tracks.length; i++) {
-        var track = tracks[i]
-        var prevTrack = i > 0 ? tracks[i-1] : tracks[tracks.length-1];
-        var nextTrack = i < tracks.length - 1 ? tracks[i+1] : tracks[0];
+        var track = tracks[i];
+        var prevTrack = i > 0 ? tracks[i - 1] : tracks[tracks.length - 1];
+        var nextTrack = i < tracks.length - 1 ? tracks[i + 1] : tracks[0];
 
-        var trackItem = createTrackItem(port,track,prevTrack,nextTrack);
+        var trackItem = createTrackItem(port, track, prevTrack, nextTrack);
         $(".tracks").append(trackItem);
       }
       break;
@@ -62,38 +61,44 @@ port.onMessage.addListener(function(msg, sender, response) {
       if (msg.content !== undefined && msg.content !== {}) {
         var track = msg.content;
         var trackHeader = $("<h4>", {
-          id : 'current-track-header',
-          text : track.title
+          id: "current-track-header",
+          text: track.title
         });
         $(".current-song").append(trackHeader);
-        $(".current-song").append($("<img>", {
-          src: track.artwork_url
-        }));
+        $(".current-song").append(
+          $("<img>", {
+            src: track.artwork_url
+          })
+        );
         var btn = $("<button />", {
-          click: function () {
+          click: function() {
             port.postMessage({
-              "message": "toggle",
-              "content": {}
+              message: "toggle",
+              content: {}
             });
             var off = $(this).children(".off");
-            var on  = $(this).children(".on");
+            var on = $(this).children(".on");
 
             on.removeClass("on");
             on.addClass("hidden off");
-            
+
             off.removeClass("hidden off");
             off.addClass("on");
-          },  
+          },
           id: "toggle-song",
           class: "button button-tiny button-action-flat playing"
         });
-        btn.append($("<i>", {
-          class: "fa fa-pause on"
-        }));
-        btn.append($("<i>", {
-          class: "fa fa-play hidden off"
-        }));
-        $(".current-song").append(btn)
+        btn.append(
+          $("<i>", {
+            class: "fa fa-pause on"
+          })
+        );
+        btn.append(
+          $("<i>", {
+            class: "fa fa-play hidden off"
+          })
+        );
+        $(".current-song").append(btn);
       }
       break;
     default:
@@ -101,47 +106,50 @@ port.onMessage.addListener(function(msg, sender, response) {
   }
 });
 
-function createCurrentTrackItem(track) {
+function createCurrentTrackItem(track) {}
 
-}
+function createTrackItem(port, track, prevTrack, nextTrack) {
+  var button = $("<button>", {
+    class: "button button-square",
+    click: function() {
+      var trackId = $(this).siblings("input")[0].value;
+      port.postMessage({
+        message: "play-song",
+        content: track
+      });
+    }
+  });
+  button.append(
+    $("<i>", {
+      class: "fa fa-play aria-hidden"
+    })
+  );
 
-function createTrackItem(port, track,prevTrack, nextTrack) {
-    var button = $('<button>', {
-      class: 'button button-square',
-      click: function() {
-        var trackId = $(this).siblings("input")[0].value;
-        port.postMessage({
-          "message": "play-song",
-          "content": track
-        })
-      }
-    });
-    button.append($('<i>', {
-      class: 'fa fa-play aria-hidden'
-    }));
+  var item = $("<li>");
+  var title = "<span>" + track.title + "</span>";
+  var trackIdInput = $("<input>", {
+    type: "hidden",
+    name: "track-id",
+    value: track.id
+  });
 
-    var item = $("<li>");
-    var title = "<span>" + track.title + "</span>";
-    var trackIdInput = $('<input>', {
-      type: 'hidden',
-      name: 'track-id',
-      value: track.id
-    });
+  var prevTrackIdInput = $("<input>", {
+    type: "hidden",
+    name: "prev-track-id",
+    value: prevTrack.id
+  });
 
-    var prevTrackIdInput = $('<input>', {
-      type: 'hidden',
-      name: 'prev-track-id',
-      value: prevTrack.id
-    });
+  var nextTrackIdInput = $("<input>", {
+    type: "hidden",
+    name: "next-track-id",
+    value: nextTrack.id
+  });
 
-    var nextTrackIdInput = $('<input>', {
-      type: 'hidden',
-      name: 'next-track-id',
-      value: nextTrack.id
-    });
-
-    $.each([title, button, trackIdInput, prevTrackIdInput, nextTrackIdInput], function(id, elem) {
+  $.each(
+    [title, button, trackIdInput, prevTrackIdInput, nextTrackIdInput],
+    function(id, elem) {
       item.append(elem);
-    });
-    return item;
+    }
+  );
+  return item;
 }
