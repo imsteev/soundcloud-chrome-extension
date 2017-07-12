@@ -25,24 +25,7 @@ function messageHandler(port) {
 
     switch (message) {
       case "play-song":
-        var track = currentTracks[content.index];
-        chrome.storage.sync.set({
-          currentTrack: track
-        });
-
-        SC.stream("/tracks/" + track.id).then(function(player) {
-          player.on("finish", function() {
-            chrome.storage.sync.set({
-              currentTrack: {}
-            });
-          });
-
-          player.play();
-
-          currentSongIdx = content.index;
-          stream = player;
-        });
-
+        playSong(port, content.index);
         displayCurrentExtensionTrack(port);
         break;
       case "search":
@@ -92,6 +75,30 @@ function messageHandler(port) {
   };
   // displayCurrentSong(port); // might not need
   return listener;
+}
+
+function playSong(port, index) {
+  var track = currentTracks[index];
+  chrome.storage.sync.set({
+    currentTrack: track
+  });
+  SC.stream("/tracks/" + track.id).then(function(player) {
+    player.on("finish", function() {
+      chrome.storage.sync.set({
+        currentTrack: {}
+      });
+      // TODO: out-of-bounds handling that would require pagination
+      playSong(port, index + 1);
+    });
+
+    player.play();
+
+    currentSongIdx = index;
+    stream = player;
+  });
+
+  // BUG: auto-play won't display the new current track
+  displayCurrentExtensionTrack(port);
 }
 
 function displayTracks(port, tracksResp) {
