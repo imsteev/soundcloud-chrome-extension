@@ -53,7 +53,6 @@ port.onMessage.addListener(function(msg, sender, response) {
       });
       break;
     case "display-current-track":
-      $(".current-song").empty();
       if (msg.content === undefined && msg.content === {}) {
         break;
       }
@@ -89,6 +88,14 @@ port.onMessage.addListener(function(msg, sender, response) {
       var pauseIcon = createIcon("fa-pause");
       var playIcon = createIcon("fa-play");
 
+      console.log("isPlaying is: " + isPlaying);
+      console.log(
+        "currentSong children is: " + $(".current-song").children().length
+      );
+
+      // TODO: handle the case where you first click a song. It won't be
+      // playing at first, but it should have the pause icon on since it
+      // momentarily will
       if (isPlaying) {
         playIcon.addClass("hidden off");
         pauseIcon.addClass("on");
@@ -100,6 +107,7 @@ port.onMessage.addListener(function(msg, sender, response) {
       btn.append(pauseIcon);
       btn.append(playIcon);
 
+      $(".current-song").empty();
       $(".current-song").append(trackHeader);
       $(".current-song").append(image);
       $(".current-song").append(btn);
