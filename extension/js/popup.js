@@ -47,109 +47,94 @@ port.onMessage.addListener(function(msg, sender, response) {
       // Any way to do an ajax call?
       $(".tracks").empty();
 
-      for (var i = 0; i < tracks.length; i++) {
-        var track = tracks[i];
-        var prevTrack = i > 0 ? tracks[i - 1] : tracks[tracks.length - 1];
-        var nextTrack = i < tracks.length - 1 ? tracks[i + 1] : tracks[0];
-
-        var trackItem = createTrackItem(port, track, prevTrack, nextTrack);
+      $.each(tracks, function(i, track) {
+        var trackItem = createTrackItem(port, track, i);
         $(".tracks").append(trackItem);
-      }
+      });
       break;
     case "display-current-track":
       $(".current-song").empty();
-      if (msg.content !== undefined && msg.content !== {}) {
-        var track = msg.content;
-        var trackHeader = $("<h4>", {
-          id: "current-track-header",
-          text: track.title
-        });
-        $(".current-song").append(trackHeader);
-        $(".current-song").append(
-          $("<img>", {
-            src: track.artwork_url
-          })
-        );
-        var btn = $("<button />", {
-          click: function() {
-            port.postMessage({
-              message: "toggle",
-              content: {}
-            });
-            var off = $(this).children(".off");
-            var on = $(this).children(".on");
-
-            on.removeClass("on");
-            on.addClass("hidden off");
-
-            off.removeClass("hidden off");
-            off.addClass("on");
-          },
-          id: "toggle-song",
-          class: "button button-tiny button-action-flat playing"
-        });
-        btn.append(
-          $("<i>", {
-            class: "fa fa-pause on"
-          })
-        );
-        btn.append(
-          $("<i>", {
-            class: "fa fa-play hidden off"
-          })
-        );
-        $(".current-song").append(btn);
+      if (msg.content === undefined && msg.content === {}) {
+        break;
       }
+      var track = msg.content.track;
+      var isPlaying = msg.content.isPlaying;
+
+      var trackHeader = $("<h4>", {
+        id: "current-track-header",
+        text: track.title
+      });
+      var image = $("<img>", {
+        src: track.artwork_url
+      });
+
+      var btn = $("<button />", {
+        click: function() {
+          port.postMessage({
+            message: "toggle",
+            content: {}
+          });
+          var off = $(this).children(".off");
+          var on = $(this).children(".on");
+
+          on.removeClass("on");
+          on.addClass("hidden off");
+
+          off.removeClass("hidden off");
+          off.addClass("on");
+        },
+        id: "toggle-song",
+        class: "button button-tiny button-action-flat playing"
+      });
+      var pauseIcon = createIcon("fa-pause");
+      var playIcon = createIcon("fa-play");
+
+      if (isPlaying) {
+        playIcon.addClass("hidden off");
+        pauseIcon.addClass("on");
+      } else {
+        playIcon.addClass("on");
+        pauseIcon.addClass("hidden off");
+      }
+
+      btn.append(pauseIcon);
+      btn.append(playIcon);
+
+      $(".current-song").append(trackHeader);
+      $(".current-song").append(image);
+      $(".current-song").append(btn);
       break;
     default:
       break;
   }
 });
 
-function createCurrentTrackItem(track) {}
+function createIcon(fontAwesomeClass) {
+  return $("<i>", {
+    class: "fa " + fontAwesomeClass
+  });
+}
 
-function createTrackItem(port, track, prevTrack, nextTrack) {
+function createTrackItem(port, track, i) {
+  var item = $("<li>");
+
+  var title = "<span>" + track.title + "</span>";
   var button = $("<button>", {
     class: "button button-square",
     click: function() {
-      var trackId = $(this).siblings("input")[0].value;
       port.postMessage({
         message: "play-song",
-        content: track
+        content: {
+          track: track,
+          index: i
+        }
       });
     }
   });
-  button.append(
-    $("<i>", {
-      class: "fa fa-play aria-hidden"
-    })
-  );
+  button.append(createIcon("fa-play"));
 
-  var item = $("<li>");
-  var title = "<span>" + track.title + "</span>";
-  var trackIdInput = $("<input>", {
-    type: "hidden",
-    name: "track-id",
-    value: track.id
-  });
+  item.append(title);
+  item.append(button);
 
-  var prevTrackIdInput = $("<input>", {
-    type: "hidden",
-    name: "prev-track-id",
-    value: prevTrack.id
-  });
-
-  var nextTrackIdInput = $("<input>", {
-    type: "hidden",
-    name: "next-track-id",
-    value: nextTrack.id
-  });
-
-  $.each(
-    [title, button, trackIdInput, prevTrackIdInput, nextTrackIdInput],
-    function(id, elem) {
-      item.append(elem);
-    }
-  );
   return item;
 }

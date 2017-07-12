@@ -13,26 +13,25 @@
       "128": "extension/img/note128.png"
     }
   },
-  "permissions": [
-    "tabs",
-    "storage",
-    "http://*/*",
-    "https://*/*"
-  ],
+  "permissions": ["tabs", "storage", "http://*/*", "https://*/*"],
   "background": {
-    "scripts": ["vendor/jquery-3.2.1.min.js",
-                "vendor/sdk-3.1.2.js",
-                "vendor/sc-widget-api.js",
-                "extension/js/background.js"],
-    "persistent" : false
+    "scripts": [
+      "vendor/jquery-3.2.1.min.js",
+      "vendor/sdk-3.1.2.js",
+      "vendor/sc-widget-api.js",
+      "extension/js/background.js"
+    ],
+    "persistent": true
   },
-  "content_scripts" : [
+  "content_scripts": [
     {
-      "matches" : ["http://soundcloud.com/*", "https://soundcloud.com/*"],
-      "js" : ["vendor/jquery-3.2.1.min.js",
-              "vendor/sdk-3.1.2.js",
-              "extension/js/soundcloud_content_script.js"],
-      "all_frames" : true
+      "matches": ["http://soundcloud.com/*", "https://soundcloud.com/*"],
+      "js": [
+        "vendor/jquery-3.2.1.min.js",
+        "vendor/sdk-3.1.2.js",
+        "extension/js/soundcloud_content_script.js"
+      ],
+      "all_frames": true
     }
   ],
   "commands": {
