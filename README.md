@@ -1,4 +1,4 @@
-# soundcloudkick
+# soundkick
 ## What is this?
 A condensed music player for Soundcloud, built as a Chrome extension.
 
