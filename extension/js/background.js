@@ -25,7 +25,7 @@ function messageHandler(port) {
 
     switch (message) {
       case "play-song":
-        playSong(port, content.index);
+        playSong(content.index);
         displayCurrentExtensionTrack(port);
         break;
       case "search":
@@ -79,7 +79,7 @@ function messageHandler(port) {
 
 // BUG: you can't replay the same song over. probably because the stream
 // doesn't close/is cached? Have to look into this.
-function playSong(port, index) {
+function playSong(index) {
   var track = currentTracks[index];
   chrome.storage.sync.set({
     currentTrack: track
@@ -89,8 +89,9 @@ function playSong(port, index) {
       chrome.storage.sync.set({
         currentTrack: {}
       });
+      console.log(player.controller.getState());
       // TODO: out-of-bounds handling that would require pagination
-      playSong(port, index + 1);
+      playSong(index + 1);
     });
 
     player.play();
@@ -98,9 +99,6 @@ function playSong(port, index) {
     currentSongIdx = index;
     stream = player;
   });
-
-  // BUG: auto-play won't display the new current track
-  displayCurrentExtensionTrack(port);
 }
 
 function displayTracks(port, tracksResp) {
@@ -134,6 +132,7 @@ function displayCurrentSong(port) {
           return t.audible == true;
         });
         if (audibleTabs.length == 0) {
+          displayCurrentExtensionTrack(port);
           return;
         }
         currentlyPlaying = audibleTabs[0];
