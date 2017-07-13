@@ -25,6 +25,9 @@ function messageHandler(port) {
 
     switch (message) {
       case "play-song":
+        if (!!stream) {
+          stream.pause();
+        }
         playSong(content.index);
         displayCurrentExtensionTrack(port);
         break;
@@ -86,22 +89,31 @@ function playSong(index) {
     currentTrack: track
   });
 
-  SC.stream("/tracks/" + track.id).then(function(player) {
-    stream = player;
-    currentSongIdx = index;
+  SC.stream("/tracks/" + track.id).then(
+    function(player) {
+      stream = player;
+      currentSongIdx = index;
 
-    stream.play();
+      stream.play();
 
-    stream.on("finish", function() {
-      chrome.storage.sync.set({
-        currentTrack: {}
+      stream.on("finish", function() {
+        chrome.storage.sync.set({
+          currentTrack: {}
+        });
+
+        // cached result will require a reset
+        stream.off("finish");
+        stream.seek(0);
+
+        // TODO: automatically display new current song when popup is open
+        // TODO: out-of-bounds handling that would require pagination
+        playSong(index + 1);
       });
-      // cached result will require a reset
-      stream.seek(0);
-      // TODO: out-of-bounds handling that would require pagination
-      playSong(index + 1);
-    });
-  });
+    },
+    function(error) {
+      console.log("Streaming error: " + error);
+    }
+  );
 }
 
 function displayTracks(port, tracksResp) {
