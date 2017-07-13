@@ -39,7 +39,7 @@ Then, clone this repo and create a JSON file called `config.json`, with the cont
 }
 ```
 
-To actually load this extension into Chrome as a developer, go to chrome://extensions/ in your Chrome browser,
+To actually load this extension into Chrome, go to chrome://extensions/ in your Chrome browser,
     and click "Load unpacked extension...". Select the directory of the project and you should be ready to go!
 
 ### Suggestions
