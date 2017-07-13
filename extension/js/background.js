@@ -81,23 +81,26 @@ function messageHandler(port) {
 // doesn't close/is cached? Have to look into this.
 function playSong(index) {
   var track = currentTracks[index];
+
   chrome.storage.sync.set({
     currentTrack: track
   });
+
   SC.stream("/tracks/" + track.id).then(function(player) {
-    player.on("finish", function() {
+    stream = player;
+    currentSongIdx = index;
+
+    stream.play();
+
+    stream.on("finish", function() {
       chrome.storage.sync.set({
         currentTrack: {}
       });
-      console.log(player.controller.getState());
+      // cached result will require a reset
+      stream.seek(0);
       // TODO: out-of-bounds handling that would require pagination
       playSong(index + 1);
     });
-
-    player.play();
-
-    currentSongIdx = index;
-    stream = player;
   });
 }
 
