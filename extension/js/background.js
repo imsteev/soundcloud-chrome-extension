@@ -150,10 +150,12 @@ function displayCurrentSong(port) {
           displayCurrentExtensionTrack(port);
           return;
         }
-        currentlyPlaying = audibleTabs[0];
         port.postMessage({
           message: "display-current-track",
-          content: currentlyPlaying
+          content: {
+            track: audibleTabs[0],
+            isPlaying: true
+          }
         });
       } else {
         displayCurrentExtensionTrack(port);
