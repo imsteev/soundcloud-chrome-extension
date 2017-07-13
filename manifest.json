@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "Soundcloud QuickPlayer",
+  "name": "Soundkick",
   "description": "Integrate a seamless audio player into browser",
   "version": "1.0",
 
   "browser_action": {
-    "default_title": "Soundcloud Player",
+    "default_title": "Soundkick Popup",
     "default_popup": "extension/html/popup.html",
     "default_icon": {
       "16": "extension/img/note16.png",
