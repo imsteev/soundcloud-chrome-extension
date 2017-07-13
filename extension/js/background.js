@@ -77,6 +77,8 @@ function messageHandler(port) {
   return listener;
 }
 
+// BUG: you can't replay the same song over. probably because the stream
+// doesn't close/is cached? Have to look into this.
 function playSong(port, index) {
   var track = currentTracks[index];
   chrome.storage.sync.set({

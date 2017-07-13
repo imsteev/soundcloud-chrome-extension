@@ -2,6 +2,11 @@ var port = chrome.runtime.connect({
   name: "soundcloud query port"
 });
 
+$(document).ready(function() {
+  console.log($("#search-bar"));
+  $("#search-bar").get(0).focus();
+});
+
 $("#search").on("click", function() {
   var searchString = $("#search-bar").val();
   if (searchString.length > 0) {
@@ -126,7 +131,10 @@ function createIcon(fontAwesomeClass) {
 function createTrackItem(port, track, i) {
   var item = $("<li>");
 
-  var title = "<span>" + track.title + "</span>";
+  var title = $("<span>", { text: track.title });
+  var titleCols = $("<div>", { class: "col-xs-9" });
+  titleCols.append(title);
+
   var button = $("<button>", {
     class: "button button-square",
     click: function() {
@@ -140,9 +148,14 @@ function createTrackItem(port, track, i) {
     }
   });
   button.append(createIcon("fa-play"));
+  var buttonCols = $("<div>", { class: "col-xs-2" });
+  buttonCols.append(button);
 
-  item.append(title);
-  item.append(button);
+  var row = $("<div>", { class: "row" });
+  row.append(titleCols);
+  row.append(buttonCols);
+  item.append(row);
+  item.append($("<hr>"));
 
   return item;
 }
