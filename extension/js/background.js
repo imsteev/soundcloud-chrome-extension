@@ -25,7 +25,9 @@ function messageHandler(port) {
 
     switch (message) {
       case "play-song":
-        playSong(content.index);
+        playSong(content.index, function() {
+          displayCurrentExtensionTrack(port);
+        });
         displayCurrentExtensionTrack(port);
         break;
       case "search":
@@ -49,7 +51,9 @@ function messageHandler(port) {
         break;
       case "next-track":
         if (currentSongIdx < currentTracks.length - 1) {
-          playSong(++currentSongIdx);
+          playSong(++currentSongIdx, function() {
+            displayCurrentExtensionTrack(port);
+          });
           try {
             displayCurrentExtensionTrack(port);
           } catch (error) {}
@@ -57,7 +61,9 @@ function messageHandler(port) {
         break;
       case "prev-track":
         if (currentSongIdx > 0) {
-          playSong(--currentSongIdx);
+          playSong(--currentSongIdx, function() {
+            displayCurrentExtensionTrack(port);
+          });
           try {
             displayCurrentExtensionTrack(port);
           } catch (error) {}
@@ -95,7 +101,7 @@ function messageHandler(port) {
 
 // BUG: you can't replay the same song over. probably because the stream
 // doesn't close/is cached? Have to look into this.
-function playSong(index) {
+function playSong(index, finishCallback) {
   if (!!stream) {
     stream.pause();
   }
@@ -124,6 +130,13 @@ function playSong(index) {
         // TODO: automatically display new current song when popup is open
         // TODO: out-of-bounds handling that would require pagination
         playSong(index + 1);
+        if (!!finishCallback) {
+          try {
+            finishCallback();
+          } catch (e) {
+            console.log("finish callback failed");
+          }
+        }
       });
     },
     function(error) {

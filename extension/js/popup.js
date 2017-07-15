@@ -77,18 +77,11 @@ port.onMessage.addListener(function(msg, sender, response) {
             message: "toggle",
             content: {}
           });
-          var off = $(this).children(".off");
-          var on = $(this).children(".on");
-
-          on.removeClass("on");
-          on.addClass("hidden off");
-
-          off.removeClass("hidden off");
-          off.addClass("on");
         },
         id: "toggle-song",
         class: "button button-tiny button-action-flat playing"
       });
+
       var pauseIcon = createIcon("fa-pause");
       var playIcon = createIcon("fa-play");
 
@@ -105,6 +98,8 @@ port.onMessage.addListener(function(msg, sender, response) {
 
       btn.append(pauseIcon);
       btn.append(playIcon);
+
+      setToggleElements(btn, [pauseIcon, playIcon], "on", "off");
 
       var prevTrack = $("<button>", {
         click: function() {
@@ -153,14 +148,21 @@ port.onMessage.addListener(function(msg, sender, response) {
   }
 });
 
-function toggleElements(button, elements, onClass, offClass) {
+// This function takes in a list of elements to toggle on/off. Only one
+// element in this list will be visible at any given moment.
+// The onClass and offClass arguments are identifiers that make it
+// easy to select the elements.
+function setToggleElements(button, elements, onClass, offClass) {
   button.on("click", function() {
-    var onIdx = elements.index(onClass);
+    var onIdx = elements.findIndex(function(elem) {
+      return elem.hasClass(onClass);
+    });
     var curOn = elements[onIdx];
     curOn.removeClass(onClass);
+    curOn.addClass(offClass + " hidden");
 
     var nextOn = elements[(onIdx + 1) % elements.length];
-    nextOn.removeClass(offClass);
+    nextOn.removeClass(offClass + " hidden");
     nextOn.addClass(onClass);
   });
 }
