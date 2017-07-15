@@ -159,3 +159,7 @@ function createTrackItem(port, track, i) {
 
   return item;
 }
+
+setInterval(function() {
+  console.log($(".progress-bar").attr("style"));
+}, 1000);

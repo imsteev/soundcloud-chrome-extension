@@ -1,85 +1,93 @@
 @mixin topX($x) {
-    margin-top: $x;
+  margin-top: $x;
 }
 
-::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
   color: lightgrey;
   text-indent: 2px;
 }
 
 .popup {
-    background: whitesmoke;
-    width: 420px;
-    height: auto;
+  background: whitesmoke;
+  width: 420px;
+  height: auto;
 
-    .row {
-        margin-top: 5px;
-        margin-bottom: 5px;
+  .progress {
+    background: transparent;
+    box-shadow: none;
+    .progress-bar {
+      height: 2px;
     }
+  }
 
-    .find-header {
-        margin-top: 20px;
-    }
+  .row {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
 
-    .current-song-header {
-        color: seagreen;
-        text-indent: 10px;
-    }
+  .find-header {
+    margin-top: 20px;
+  }
 
-    .controls {
-        margin-top: 10px;
-    }
+  .current-song-header {
+    color: seagreen;
+    text-indent: 10px;
+  }
 
-    .search-div {
-        margin-top: 10px;
-    }
+  .controls {
+    margin-top: 10px;
+  }
 
-    .tracks {
-        text-indent: 10px;
-        li {
-            list-style: none;
-            padding-left: 5px;
-            button {
-                margin-left: 20px;
-                background-color: transparent;
-            }
-        }
-    }
+  .search-div {
+    margin-top: 10px;
+  }
 
-    .title {
-        .fa-soundcloud {
-            color: orange;
-        }
+  .tracks {
+    text-indent: 10px;
+    li {
+      list-style: none;
+      padding-left: 5px;
+      button {
+        margin-left: 20px;
+        background-color: transparent;
+      }
     }
+  }
 
-    .playing {
-        margin-left: 40px;
+  .title {
+    .fa-soundcloud {
+      color: orange;
     }
-    .all-tracks {
-        button {
-            width: 100%;
-        }
-    }
+  }
 
-    .current-song {
-        text-align: center;
-        img {
-            align-content: center;
-        }
+  .playing {
+    margin-left: 40px;
+  }
+  .all-tracks {
+    button {
+      width: 100%;
     }
+  }
 
-    input:focus {
-        outline: none;
+  .current-song {
+    text-align: center;
+    img {
+      align-content: center;
     }
+  }
+
+  input:focus {
+    outline: none;
+  }
 }
 
 #song-name {
-
 }
 
 #search-bar {
-    height: 30px;
-    width: 270px;
+  height: 30px;
+  width: 270px;
 }
 
 #search {
