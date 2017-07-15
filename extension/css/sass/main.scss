@@ -61,9 +61,6 @@
     }
   }
 
-  .playing {
-    margin-left: 40px;
-  }
   .all-tracks {
     button {
       width: 100%;
@@ -74,6 +71,13 @@
     text-align: center;
     img {
       align-content: center;
+    }
+    .current-song-controls {
+      margin-top: 10px;
+      .playing {
+        margin-left: 40px;
+        margin-right: 40px;
+      }
     }
   }
 

@@ -92,11 +92,6 @@ port.onMessage.addListener(function(msg, sender, response) {
       var pauseIcon = createIcon("fa-pause");
       var playIcon = createIcon("fa-play");
 
-      console.log("isPlaying is: " + isPlaying);
-      console.log(
-        "currentSong children is: " + $(".current-song").children().length
-      );
-
       // TODO: handle the case where you first click a song. It won't be
       // playing at first, but it should have the pause icon on since it
       // momentarily will
@@ -111,10 +106,43 @@ port.onMessage.addListener(function(msg, sender, response) {
       btn.append(pauseIcon);
       btn.append(playIcon);
 
+      var prevTrack = $("<button>", {
+        click: function() {
+          port.postMessage({
+            message: "prev-track",
+            content: {}
+          });
+        },
+        id: "prev-track",
+        class: "button button-tiny button-action-flat"
+      });
+      var prevIcon = createIcon("fa-chevron-left");
+      prevTrack.append(prevIcon);
+
+      var nextTrack = $("<button>", {
+        click: function() {
+          port.postMessage({
+            message: "next-track",
+            content: {}
+          });
+        },
+        id: "next-track",
+        class: "button button-tiny button-action-flat"
+      });
+      var nextIcon = createIcon("fa-chevron-right");
+      nextTrack.append(nextIcon);
+
+      var songControls = $("<div>", {
+        class: "current-song-controls"
+      });
+      songControls.append(prevTrack);
+      songControls.append(btn);
+      songControls.append(nextTrack);
+
       $(".current-song").empty();
       $(".current-song").append(trackHeader);
       $(".current-song").append(image);
-      $(".current-song").append(btn);
+      $(".current-song").append(songControls);
       break;
     case "no-internet-connection": {
       $(".no-connection").removeClass("hidden");

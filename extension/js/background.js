@@ -25,9 +25,6 @@ function messageHandler(port) {
 
     switch (message) {
       case "play-song":
-        if (!!stream) {
-          stream.pause();
-        }
         playSong(content.index);
         displayCurrentExtensionTrack(port);
         break;
@@ -48,6 +45,22 @@ function messageHandler(port) {
       case "toggle":
         if (!!stream) {
           stream.toggle();
+        }
+        break;
+      case "next-track":
+        if (currentSongIdx < currentTracks.length - 1) {
+          playSong(++currentSongIdx);
+          try {
+            displayCurrentExtensionTrack(port);
+          } catch (error) {}
+        }
+        break;
+      case "prev-track":
+        if (currentSongIdx > 0) {
+          playSong(--currentSongIdx);
+          try {
+            displayCurrentExtensionTrack(port);
+          } catch (error) {}
         }
         break;
       case "next-tracks":
@@ -83,8 +96,11 @@ function messageHandler(port) {
 // BUG: you can't replay the same song over. probably because the stream
 // doesn't close/is cached? Have to look into this.
 function playSong(index) {
-  var track = currentTracks[index];
+  if (!!stream) {
+    stream.pause();
+  }
 
+  var track = currentTracks[index];
   chrome.storage.sync.set({
     currentTrack: track
   });

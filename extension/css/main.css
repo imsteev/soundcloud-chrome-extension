@@ -34,14 +34,17 @@
         background-color: transparent; }
   .popup .title .fa-soundcloud {
     color: orange; }
-  .popup .playing {
-    margin-left: 40px; }
   .popup .all-tracks button {
     width: 100%; }
   .popup .current-song {
     text-align: center; }
     .popup .current-song img {
       align-content: center; }
+    .popup .current-song .current-song-controls {
+      margin-top: 10px; }
+      .popup .current-song .current-song-controls .playing {
+        margin-left: 40px;
+        margin-right: 40px; }
   .popup input:focus {
     outline: none; }
 
