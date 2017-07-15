@@ -153,6 +153,18 @@ port.onMessage.addListener(function(msg, sender, response) {
   }
 });
 
+function toggleElements(button, elements, onClass, offClass) {
+  button.on("click", function() {
+    var onIdx = elements.index(onClass);
+    var curOn = elements[onIdx];
+    curOn.removeClass(onClass);
+
+    var nextOn = elements[(onIdx + 1) % elements.length];
+    nextOn.removeClass(offClass);
+    nextOn.addClass(onClass);
+  });
+}
+
 function createIcon(fontAwesomeClass) {
   return $("<i>", {
     class: "fa " + fontAwesomeClass
