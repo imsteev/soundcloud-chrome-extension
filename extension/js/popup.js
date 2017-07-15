@@ -3,7 +3,6 @@ var port = chrome.runtime.connect({
 });
 
 $(document).ready(function() {
-  console.log($("#search-bar"));
   $("#search-bar").get(0).focus();
 });
 
@@ -117,6 +116,10 @@ port.onMessage.addListener(function(msg, sender, response) {
       $(".current-song").append(image);
       $(".current-song").append(btn);
       break;
+    case "no-internet-connection": {
+      $(".no-connection").removeClass("hidden");
+      break;
+    }
     default:
       break;
   }
@@ -159,7 +162,3 @@ function createTrackItem(port, track, i) {
 
   return item;
 }
-
-setInterval(function() {
-  console.log($(".progress-bar").attr("style"));
-}, 1000);
