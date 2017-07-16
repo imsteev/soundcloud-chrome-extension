@@ -42,9 +42,9 @@
       align-content: center; }
     .popup .current-song .current-song-controls {
       margin-top: 10px; }
-      .popup .current-song .current-song-controls .playing {
-        margin-left: 40px;
-        margin-right: 40px; }
+      .popup .current-song .current-song-controls button {
+        margin-left: 20px;
+        margin-right: 20px; }
   .popup input:focus {
     outline: none; }
 

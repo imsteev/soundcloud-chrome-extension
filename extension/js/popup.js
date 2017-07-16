@@ -136,12 +136,26 @@ port.onMessage.addListener(function(msg, sender, response) {
       var nextIcon = createIcon("fa-chevron-right");
       nextTrack.append(nextIcon);
 
+      var replayTrack = $("<button>", {
+        click: function() {
+          port.postMessage({
+            message: "replay",
+            content: {}
+          });
+        },
+        id: "replay",
+        class: "button button-tiny button-action-flat"
+      });
+      var replayIcon = createIcon("fa-repeat");
+      replayTrack.append(replayIcon);
+
       var songControls = $("<div>", {
         class: "current-song-controls"
       });
       songControls.append(prevTrack);
       songControls.append(btn);
       songControls.append(nextTrack);
+      songControls.append(replayTrack);
 
       $(".current-song").empty();
       $(".current-song").append(trackHeader);

@@ -10,10 +10,12 @@ var commands = new commands(chrome);
 var controller = new controller(chrome);
 
 chrome.storage.sync.clear();
-var stream = null;
-var currentTracks = null;
-var currentSongIdx = -1;
-var currentPort = null;
+
+// GLOBALS - since the background page keeps running, these variables will
+// be tracked and used.
+var stream = null,
+  currentTracks = null,
+  currentSongIdx = -1;
 // -----------------------------------------------------------------------------
 chrome.runtime.onConnect.addListener(function(port) {
   clearPagination();
@@ -90,7 +92,17 @@ function messageHandler(port) {
         if (!!!stream) {
           break;
         }
-      // stream.on('')
+        stream.on("time", function() {
+          var diff = stream.controller.getDuration() - stream.currentTime();
+          if (diff < 1000) {
+            console.log("seeking to beginning");
+            stream.pause();
+            stream.seek(0);
+            stream.play();
+            stream.off("time");
+          }
+        });
+        break;
       default:
         break;
     }
@@ -119,6 +131,7 @@ function playSong(index, port) {
       stream.play();
 
       stream.on("finish", function() {
+        console.log("finished");
         chrome.storage.sync.set({
           currentTrack: {}
         });
@@ -131,10 +144,6 @@ function playSong(index, port) {
         // TODO: out-of-bounds handling that would require pagination
         playSong(index + 1, port);
       });
-
-      // stream.on("time", function() {
-      //   console.log(stream.currentTime());
-      // });
     },
     function(error) {
       console.log("Streaming error: " + error);
@@ -232,6 +241,19 @@ function getNextHref(url) {
   return oldUrl[0] + "?" + $.param(params);
 }
 
+// --------- keyboard shortcut listener -------------------------------------
+chrome.commands.onCommand.addListener(function(command) {
+  switch (command) {
+    case "open-soundcloud":
+      commands.switchToSoundcloudTab();
+      break;
+    case "previous-location":
+      commands.switchToPreviousLocation();
+    default:
+      break;
+  }
+});
+
 // https://gist.github.com/kares/956897
 (function($) {
   var re = /([^&=]+)=?([^&]*)/g;
@@ -253,16 +275,3 @@ function getNextHref(url) {
     return params;
   };
 })(jQuery);
-
-// --------- keyboard shortcut listener -------------------------------------
-chrome.commands.onCommand.addListener(function(command) {
-  switch (command) {
-    case "open-soundcloud":
-      commands.switchToSoundcloudTab();
-      break;
-    case "previous-location":
-      commands.switchToPreviousLocation();
-    default:
-      break;
-  }
-});
