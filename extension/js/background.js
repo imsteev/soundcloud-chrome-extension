@@ -128,9 +128,11 @@ function playSong(index, port) {
   chrome.storage.sync.set({
     currentTrack: track
   });
-  try {
-    displayCurrentExtensionTrack(port);
-  } catch (error) {}
+
+  // TODO: ensure stream is set before this function is called?
+  // try {
+  //   displayCurrentExtensionTrack(port);
+  // } catch (error) {}
 
   SC.stream("/tracks/" + track.id).then(
     function(player) {
@@ -139,6 +141,11 @@ function playSong(index, port) {
 
       stream.play();
 
+      try {
+        displayCurrentExtensionTrack(port);
+      } catch (error) {}
+
+      // TODO: use stream.on(play_start)
       stream.on("finish", function() {
         chrome.storage.sync.set({
           currentTrack: {}
@@ -219,10 +226,15 @@ function displayCurrentExtensionTrack(port) {
           message: "display-current-track",
           content: {
             track: obj.currentTrack,
-            isPlaying: !!stream && stream.controller.getState() === "playing"
+            isPlaying:
+              !!stream &&
+              (stream.controller.getState() === "playing" ||
+                stream.controller.getState() === "buffering_start" ||
+                stream.controller.getState() === "buffering_end")
           }
         });
       } catch (e) {
+        console.log(stream);
         console.log("Couldn't display track: " + e);
       }
     }

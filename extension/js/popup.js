@@ -69,7 +69,7 @@ port.onMessage.addListener(function(msg, sender, response) {
       }
       var track = content.track;
       var isPlaying = content.isPlaying;
-
+      console.log("isPlaying: " + isPlaying);
       $("#song-header").attr("song-href", track.permalink_url);
 
       var trackHeader = $("<h4>", {
