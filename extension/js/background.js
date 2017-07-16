@@ -15,7 +15,8 @@ chrome.storage.sync.clear();
 // be tracked and used.
 var stream = null,
   currentTracks = null,
-  currentSongIdx = -1;
+  currentSongIdx = -1,
+  replayCount = 0;
 // -----------------------------------------------------------------------------
 chrome.runtime.onConnect.addListener(function(port) {
   clearPagination();
@@ -31,7 +32,8 @@ function messageHandler(port) {
 
     switch (message) {
       case "play-song":
-        playSong(content.index, port);
+        currentSongIdx = content.index;
+        playSong(currentSongIdx, port);
         break;
       case "search":
         var searchInfo = {
@@ -92,22 +94,29 @@ function messageHandler(port) {
         if (!!!stream) {
           break;
         }
-        stream.on("time", function() {
-          var diff = stream.controller.getDuration() - stream.currentTime();
-          if (diff < 1000) {
-            console.log("seeking to beginning");
-            stream.pause();
-            stream.seek(0);
-            stream.play();
-            stream.off("time");
-          }
-        });
+        queueReplay();
         break;
       default:
         break;
     }
   };
   return listener;
+}
+
+function queueReplay() {
+  replayCount++;
+  stream.on("time", function() {
+    var diff = stream.controller.getDuration() - stream.currentTime();
+    if (diff < 1000) {
+      stream.pause();
+      stream.seek(0);
+      stream.play();
+      replayCount--;
+    }
+    if (replayCount <= 0) {
+      stream.off("time");
+    }
+  });
 }
 
 function playSong(index, port) {
