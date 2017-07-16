@@ -131,7 +131,6 @@ function playSong(index, port) {
       stream.play();
 
       stream.on("finish", function() {
-        console.log("finished");
         chrome.storage.sync.set({
           currentTrack: {}
         });
@@ -200,20 +199,23 @@ function displayCurrentSong(port) {
 }
 
 function displayCurrentExtensionTrack(port) {
-  // TODO: determine if port is connected before trying to read from storage
   chrome.storage.sync.get(["currentTrack"], function(obj) {
     if (
       chrome.runtime.lastError == null &&
       "currentTrack" in obj &&
       !$.isEmptyObject(obj.currentTrack)
     ) {
-      port.postMessage({
-        message: "display-current-track",
-        content: {
-          track: obj.currentTrack,
-          isPlaying: !!stream && stream.controller.getState() === "playing"
-        }
-      });
+      try {
+        port.postMessage({
+          message: "display-current-track",
+          content: {
+            track: obj.currentTrack,
+            isPlaying: !!stream && stream.controller.getState() === "playing"
+          }
+        });
+      } catch (e) {
+        console.log("Couldn't display track: " + e);
+      }
     }
   });
 }
