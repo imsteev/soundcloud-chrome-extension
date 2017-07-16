@@ -1,9 +1,9 @@
 // Initialization --------------------------------------------------------------
 $.getJSON("../config.json", function(data) {
-  console.log("initialized");
   SC.initialize({
     client_id: data["soundcloud_client_id"]
   });
+  console.log("Successfully initialized soundcloud client");
 });
 
 var commands = new commands(chrome);
