@@ -254,23 +254,7 @@ function getNextHref(url) {
   };
 })(jQuery);
 
-// --------- KEYBOARD SHORTCUT LISTENERS -------------------------------------
-function switchToTabInWindow(tabId, windowId) {
-  var windowUpdateInfo = { focused: true };
-  chrome.windows.update(windowId, windowUpdateInfo);
-
-  var tabUpdateInfo = { active: true };
-  chrome.tabs.update(tabId, tabUpdateInfo);
-}
-
-function setPrevPageInfo(tabId, windowId) {
-  var newPrevInfo = {
-    prevTabId: tabId,
-    prevWindowId: windowId
-  };
-  chrome.storage.sync.set(newPrevInfo);
-}
-
+// --------- keyboard shortcut listener -------------------------------------
 chrome.commands.onCommand.addListener(function(command) {
   switch (command) {
     case "open-soundcloud":
