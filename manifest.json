@@ -19,6 +19,8 @@
       "vendor/jquery-3.2.1.min.js",
       "vendor/sdk-3.1.2.js",
       "vendor/sc-widget-api.js",
+      "extension/js/commands.js",
+      "extension/js/controller.js",
       "extension/js/background.js"
     ],
     "persistent": true

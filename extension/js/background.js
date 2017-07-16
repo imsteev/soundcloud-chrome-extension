@@ -6,6 +6,9 @@ $.getJSON("../config.json", function(data) {
   });
 });
 
+var commands = new commands(chrome);
+var controller = new controller(chrome);
+
 chrome.storage.sync.clear();
 var stream = null;
 var currentTracks = null;
