@@ -2,10 +2,6 @@ var port = chrome.runtime.connect({
   name: "soundcloud query port"
 });
 
-$(document).ready(function() {
-  $("#search-bar").get(0).focus();
-});
-
 $("#search").on("click", function() {
   var searchString = $("#search-bar").val();
   if (searchString.length > 0) {
@@ -26,11 +22,22 @@ $("#show-tracks").on("click", function() {
   $(".tracks").toggle();
 });
 
+$("#song-header").on("click", function() {
+  var href = $(this).attr("song-href");
+  if (href === "") {
+    return;
+  }
+  chrome.tabs.create({ url: href, active: false });
+});
+
 port.onMessage.addListener(function(msg, sender, response) {
-  switch (msg.message) {
+  var message = msg.message;
+  var content = msg.content;
+
+  switch (message) {
     case "display-tracks":
-      var tracks = msg.content.collection;
-      var nextHref = msg.content.next_href;
+      var tracks = content.collection;
+      var nextHref = content.next_href;
 
       $("#next-tracks").off("click");
       $("#next-tracks").on("click", function() {
@@ -57,11 +64,13 @@ port.onMessage.addListener(function(msg, sender, response) {
       });
       break;
     case "display-current-track":
-      if (msg.content === undefined && msg.content === {}) {
+      if (!!!content || content === {}) {
         break;
       }
-      var track = msg.content.track;
-      var isPlaying = msg.content.isPlaying;
+      var track = content.track;
+      var isPlaying = content.isPlaying;
+
+      $("#song-header").attr("song-href", track.permalink_url);
 
       var trackHeader = $("<h4>", {
         id: "current-track-header",

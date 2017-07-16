@@ -10,6 +10,7 @@ chrome.storage.sync.clear();
 var stream = null;
 var currentTracks = null;
 var currentSongIdx = -1;
+var currentPort = null;
 // -----------------------------------------------------------------------------
 chrome.runtime.onConnect.addListener(function(port) {
   clearPagination();
@@ -25,10 +26,7 @@ function messageHandler(port) {
 
     switch (message) {
       case "play-song":
-        playSong(content.index, function() {
-          displayCurrentExtensionTrack(port);
-        });
-        displayCurrentExtensionTrack(port);
+        playSong(content.index, port);
         break;
       case "search":
         var searchInfo = {
@@ -50,24 +48,18 @@ function messageHandler(port) {
         }
         break;
       case "next-track":
-        if (currentSongIdx < currentTracks.length - 1) {
-          playSong(++currentSongIdx, function() {
-            displayCurrentExtensionTrack(port);
-          });
-          try {
-            displayCurrentExtensionTrack(port);
-          } catch (error) {}
+        if (currentSongIdx >= currentTracks.length) {
+          break;
         }
+        playSong(++currentSongIdx, port);
+
         break;
       case "prev-track":
-        if (currentSongIdx > 0) {
-          playSong(--currentSongIdx, function() {
-            displayCurrentExtensionTrack(port);
-          });
-          try {
-            displayCurrentExtensionTrack(port);
-          } catch (error) {}
+        if (currentSongIdx <= 0) {
+          break;
         }
+        playSong(--currentSongIdx, port);
+
         break;
       case "next-tracks":
         var currentTrackHref = content;
@@ -91,17 +83,19 @@ function messageHandler(port) {
           }
         });
         break;
+      case "replay":
+        if (!!!stream) {
+          break;
+        }
+      // stream.on('')
       default:
         break;
     }
   };
-  // displayCurrentSong(port); // might not need
   return listener;
 }
 
-// BUG: you can't replay the same song over. probably because the stream
-// doesn't close/is cached? Have to look into this.
-function playSong(index, finishCallback) {
+function playSong(index, port) {
   if (!!stream) {
     stream.pause();
   }
@@ -110,6 +104,9 @@ function playSong(index, finishCallback) {
   chrome.storage.sync.set({
     currentTrack: track
   });
+  try {
+    displayCurrentExtensionTrack(port);
+  } catch (error) {}
 
   SC.stream("/tracks/" + track.id).then(
     function(player) {
@@ -129,15 +126,12 @@ function playSong(index, finishCallback) {
 
         // TODO: automatically display new current song when popup is open
         // TODO: out-of-bounds handling that would require pagination
-        playSong(index + 1);
-        if (!!finishCallback) {
-          try {
-            finishCallback();
-          } catch (e) {
-            console.log("finish callback failed");
-          }
-        }
+        playSong(index + 1, port);
       });
+
+      // stream.on("time", function() {
+      //   console.log(stream.currentTime());
+      // });
     },
     function(error) {
       console.log("Streaming error: " + error);
@@ -194,6 +188,7 @@ function displayCurrentSong(port) {
 }
 
 function displayCurrentExtensionTrack(port) {
+  // TODO: determine if port is connected before trying to read from storage
   chrome.storage.sync.get(["currentTrack"], function(obj) {
     if (
       chrome.runtime.lastError == null &&
