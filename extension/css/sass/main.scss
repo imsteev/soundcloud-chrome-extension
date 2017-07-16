@@ -33,6 +33,10 @@
   .current-song-header {
     color: seagreen;
     text-indent: 10px;
+
+    #song-header {
+      cursor: pointer;
+    }
   }
 
   .controls {

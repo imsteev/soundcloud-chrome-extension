@@ -20,6 +20,8 @@
   .popup .current-song-header {
     color: seagreen;
     text-indent: 10px; }
+    .popup .current-song-header #song-header {
+      cursor: pointer; }
   .popup .controls {
     margin-top: 10px; }
   .popup .search-div {
