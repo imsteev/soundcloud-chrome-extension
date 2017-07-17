@@ -132,7 +132,6 @@ function playSong(index, port) {
   SC.stream("/tracks/" + track.id).then(
     function(player) {
       stream = player;
-      currentSongIdx = index;
 
       stream.on("finish", function() {
         chrome.storage.sync.set({
@@ -144,7 +143,7 @@ function playSong(index, port) {
         stream.seek(0);
 
         // TODO: out-of-bounds handling that would require pagination
-        playSong(index + 1, port);
+        playSong(++currentSongIdx, port);
       });
 
       stream.on("play-start", function() {
@@ -172,10 +171,11 @@ function playSong(index, port) {
       stream.on("no_protocol", function() {
         console.log("Error: No protocol could be found");
       });
+
       stream.play();
     },
     function(error) {
-      console.log("Streaming error: " + error);
+      console.log(error);
     }
   );
 }
@@ -244,11 +244,11 @@ function displayCurrentExtensionTrack(port) {
               !!stream &&
               !!stream.controller &&
               (stream.controller.getState() !== "paused" ||
-                stream.controller.getState() !== "finished")
+                stream.controller.getState() !== "finish")
           }
         });
       } catch (e) {
-        console.log("Couldn't display track: " + e);
+        console.log("Error trying to display extension track: " + e);
       }
     }
   });

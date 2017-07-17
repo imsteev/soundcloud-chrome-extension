@@ -18,10 +18,12 @@
   .popup .find-header {
     margin-top: 20px; }
   .popup .current-song-header {
-    color: seagreen;
+    color: black;
     text-indent: 5px; }
     .popup .current-song-header #song-header {
       cursor: pointer; }
+      .popup .current-song-header #song-header:hover {
+        color: blue; }
   .popup .controls {
     margin-top: 10px; }
   .popup .search-div {

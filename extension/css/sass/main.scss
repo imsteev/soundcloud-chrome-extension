@@ -31,11 +31,15 @@
   }
 
   .current-song-header {
-    color: seagreen;
+    color: black;
     text-indent: 5px;
 
     #song-header {
       cursor: pointer;
+
+      &:hover {
+        color: blue;
+      }
     }
   }
 
