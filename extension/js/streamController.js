@@ -6,11 +6,13 @@ function streamController(SC, chrome) {
   self._currentSongIdx = -1;
   self._replayCount = 0;
 
-  self.playSong = function(eventFns) {
+  self.playSong = function(i, eventFns) {
     if (!!self.stream) {
       self.stream.pause();
     }
-    var track = self.getCurrentTrack();
+
+    var track = self.tracks[i];
+    self._currentSongIdx = i;
 
     chrome.storage.sync.set({
       currentTrack: track
@@ -53,14 +55,14 @@ function streamController(SC, chrome) {
     if (!setNextTrack()) {
       return;
     }
-    self.playSong(eventFns);
+    self.playSong(self._currentSongIdx, eventFns);
   };
 
   self.playPrevSong = function(eventFns) {
     if (!setPrevTrack()) {
       return;
     }
-    self.playSong(eventFns);
+    self.playSong(self._currentSongIdx, eventFns);
   };
 
   self.queueReplay = function() {
@@ -87,6 +89,7 @@ function streamController(SC, chrome) {
     }
     return null;
   };
+
   self.getStream = function() {
     return self.stream;
   };
