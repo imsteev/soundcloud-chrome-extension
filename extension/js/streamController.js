@@ -1,4 +1,4 @@
-function streamController(chrome) {
+function streamController(SC, chrome) {
   var self = this;
 
   self.stream = null;
@@ -10,7 +10,7 @@ function streamController(chrome) {
     if (!!self.stream) {
       self.stream.pause();
     }
-    var track = getTrack(self.currentSongIdx);
+    var track = self.getCurrentTrack();
 
     chrome.storage.sync.set({
       currentTrack: track
@@ -50,12 +50,16 @@ function streamController(chrome) {
   };
 
   self.playNextSong = function(eventFns) {
-    setNextTrack();
+    if (!setNextTrack()) {
+      return;
+    }
     self.playSong(eventFns);
   };
 
   self.playPrevSong = function(eventFns) {
-    setPrevTrack();
+    if (!setPrevTrack()) {
+      return;
+    }
     self.playSong(eventFns);
   };
 
@@ -77,6 +81,12 @@ function streamController(chrome) {
     });
   };
 
+  self.getCurrentTrack = function() {
+    if (!!self.tracks) {
+      return self.tracks[self.currentSongIdx];
+    }
+    return null;
+  };
   self.getStream = function() {
     return self.stream;
   };
@@ -130,17 +140,16 @@ function streamController(chrome) {
   }
 
   function setNextTrack() {
-    self.currentSongIdx++;
+    if (++self.currentSongIdx >= self.tracks.length) {
+      return false;
+    }
+    return true;
   }
 
   function setPrevTrack() {
-    self.currentSongIdx--;
-  }
-
-  function getTrack(i) {
-    if (!!self.tracks) {
-      return self.tracks[i];
+    if (--self.currentSongIdx < 0) {
+      return false;
     }
-    return null;
+    return true;
   }
 }

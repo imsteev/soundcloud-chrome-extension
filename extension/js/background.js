@@ -8,7 +8,7 @@ $.getJSON("../config.json", function(data) {
 
 var commands = new commands(chrome);
 var controller = new controller(chrome);
-var streamController = new streamController(chrome);
+var streamController = new streamController(SC, chrome);
 
 chrome.storage.sync.clear();
 
