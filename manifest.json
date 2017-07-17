@@ -21,6 +21,7 @@
       "vendor/sc-widget-api.js",
       "extension/js/commands.js",
       "extension/js/controller.js",
+      "extension/js/streamController.js",
       "extension/js/background.js"
     ],
     "persistent": true

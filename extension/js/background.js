@@ -8,6 +8,7 @@ $.getJSON("../config.json", function(data) {
 
 var commands = new commands(chrome);
 var controller = new controller(chrome);
+var streamController = new streamController(chrome);
 
 chrome.storage.sync.clear();
 
@@ -134,6 +135,7 @@ function playSong(index, port) {
       stream = player;
 
       stream.on("finish", function() {
+        // TODO: remove the currentTrack key-val altogether?
         chrome.storage.sync.set({
           currentTrack: {}
         });

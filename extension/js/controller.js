@@ -49,7 +49,7 @@ function controller(chrome) {
     );
   };
 
-  self.displayCurrentExtensionTrack = function(port, message) {
+  self.displayCurrentExtensionTrack = function(port) {
     // TODO: determine if port is connected before trying to read from storage
     chrome.storage.sync.get(["currentTrack"], function(obj) {
       if (
