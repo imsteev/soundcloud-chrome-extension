@@ -123,42 +123,56 @@ function playSong(index, port) {
   if (!!stream) {
     stream.pause();
   }
-
+  currentPort = port;
   var track = currentTracks[index];
   chrome.storage.sync.set({
     currentTrack: track
   });
-
-  // TODO: ensure stream is set before this function is called?
-  // try {
-  //   displayCurrentExtensionTrack(port);
-  // } catch (error) {}
 
   SC.stream("/tracks/" + track.id).then(
     function(player) {
       stream = player;
       currentSongIdx = index;
 
-      stream.play();
-
-      try {
-        displayCurrentExtensionTrack(port);
-      } catch (error) {}
-
-      // TODO: use stream.on(play_start)
       stream.on("finish", function() {
         chrome.storage.sync.set({
           currentTrack: {}
         });
 
-        // cached result will require a reset
+        // cached result will require a reset?
         stream.off("finish");
         stream.seek(0);
 
-        // TODO: automatically display new current song when popup is open
         // TODO: out-of-bounds handling that would require pagination
         playSong(index + 1, port);
       });
+
+      stream.on("play-start", function() {
+        try {
+          displayCurrentExtensionTrack(port);
+        } catch (error) {}
+      });
+
+      stream.on("no_streams", function() {
+        console.log("Error: Could not fetch streaming resource");
+      });
+
+      stream.on("audio_error", function() {
+        console.log("Error: Something wrong with the audio resource");
+      });
+
+      stream.on("no_connection", function() {
+        console.log("Error: No connection available. Try again later");
+      });
+
+      stream.on("geo_blocked", function() {
+        console.log("Error: Cannot play requested song in this country");
+      });
+
+      stream.on("no_protocol", function() {
+        console.log("Error: No protocol could be found");
+      });
+      stream.play();
     },
     function(error) {
       console.log("Streaming error: " + error);
@@ -228,13 +242,12 @@ function displayCurrentExtensionTrack(port) {
             track: obj.currentTrack,
             isPlaying:
               !!stream &&
-              (stream.controller.getState() === "playing" ||
-                stream.controller.getState() === "buffering_start" ||
-                stream.controller.getState() === "buffering_end")
+              !!stream.controller &&
+              (stream.controller.getState() !== "paused" ||
+                stream.controller.getState() !== "finished")
           }
         });
       } catch (e) {
-        console.log(stream);
         console.log("Couldn't display track: " + e);
       }
     }
