@@ -47,6 +47,7 @@ function messageHandler(port) {
           chrome.storage.sync.set({
             previousSearch: searchInfo
           });
+          streamController.setTracks(res.collection);
           displayTracks(port, res);
         });
         break;
@@ -72,6 +73,7 @@ function messageHandler(port) {
       case "next-tracks":
         var currentTrackHref = content;
         $.getJSON(currentTrackHref, function(res) {
+          streamController.setTracks(res.collection);
           displayTracks(port, res);
           chrome.storage.sync.set({
             prevTracks: getPrevHref(currentTrackHref)
@@ -83,6 +85,7 @@ function messageHandler(port) {
           if (chrome.runtime.lastError == null && !$.isEmptyObject(obj)) {
             var currentTrackHref = obj.prevTracks;
             $.getJSON(obj.prevTracks, function(res) {
+              streamController.setTracks(res.collection);
               displayTracks(port, res);
               chrome.storage.sync.set({
                 prevTracks: getPrevHref(currentTrackHref)
@@ -194,6 +197,7 @@ function displayPreviousSearch(port) {
   chrome.storage.sync.get(["previousSearch"], function(obj) {
     if (chrome.runtime.lastError == null && "previousSearch" in obj) {
       SC.get("/tracks", obj.previousSearch).then(function(res) {
+        streamController.setTracks(res.collection);
         displayTracks(port, res);
       });
     }
