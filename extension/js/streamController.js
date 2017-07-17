@@ -40,6 +40,7 @@ function streamController(SC, chrome) {
 
         if (!!eventFns) {
           $.each(eventFns, function(eventName, fn) {
+            console.log(eventName, fn());
             self.stream.on(eventName, fn);
           });
         }
@@ -53,6 +54,7 @@ function streamController(SC, chrome) {
 
   self.playNextSong = function(eventFns) {
     if (!setNextTrack()) {
+      console.log("couldn't play next song");
       return;
     }
     self.playSong(self._currentSongIdx, eventFns);
@@ -143,14 +145,14 @@ function streamController(SC, chrome) {
   }
 
   function setNextTrack() {
-    if (++self.currentSongIdx >= self.tracks.length) {
+    if (++self._currentSongIdx >= self.tracks.length) {
       return false;
     }
     return true;
   }
 
   function setPrevTrack() {
-    if (--self.currentSongIdx < 0) {
+    if (--self._currentSongIdx < 0) {
       return false;
     }
     return true;

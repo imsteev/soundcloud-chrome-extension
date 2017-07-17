@@ -35,6 +35,10 @@ function messageHandler(port) {
       case "play-song":
         currentSongIdx = content.index;
         playSong(currentSongIdx, port);
+
+        // streamController.playSong(content.index, {
+        //   "play-start": displayCurrentTrackCallback(port)
+        // });
         break;
       case "search":
         var searchInfo = {
@@ -52,11 +56,14 @@ function messageHandler(port) {
         });
         break;
       case "toggle":
+        // var stream = streamController.getStream();
         if (!!stream) {
           stream.toggle();
         }
         break;
       case "next-track":
+        // streamController.playNextSong();
+
         if (currentSongIdx >= currentTracks.length) {
           break;
         }
@@ -64,6 +71,8 @@ function messageHandler(port) {
 
         break;
       case "prev-track":
+        // streamController.playPrevSong();
+
         if (currentSongIdx <= 0) {
           break;
         }
@@ -107,6 +116,12 @@ function messageHandler(port) {
   return listener;
 }
 
+function displayCurrentTrackCallback(port) {
+  var f = function() {
+    displayCurrentExtensionTrack(port);
+  };
+  return f;
+}
 function queueReplay() {
   replayCount++;
   stream.on("time", function() {
